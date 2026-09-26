@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#edf0f2">
+  <meta name="description" content="移动端3D户型、房间面积与米制尺寸图。基于参考模型，非现场实测或施工依据。">
+  <meta name="robots" content="noindex,nofollow">
+  <title>户型 · 面积与尺寸</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23273643'/%3E%3Cpath d='M8 24V8h9v6h7v10zm9-10v10M8 17h9' fill='none' stroke='%23e4ceb0' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+</head>
+<body>
+  <header class="header">
+    <div class="identity"><span class="monogram">3<span>D</span></span><div><h1>户型 · 面积与尺寸</h1><p>参考模型 / 单位：米、平方米</p></div></div>
+    <button class="icon-button" id="about" aria-label="查看模型依据与墙体差异说明"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg></button>
+  </header>
+
+  <main>
+    <section class="viewer" aria-label="交互式3D户型">
+      <div class="view-top"><span class="draft"><i></i>20楼核对稿 · 7楼底模</span><span class="level">FLOOR <b>20</b></span></div>
+      <div id="scene" tabindex="0" aria-label="户型3D模型。拖动旋转，双指缩放。也可使用下方按钮及方向键。"></div>
+      <div id="labels" aria-hidden="true"></div>
+      <svg id="dimensions" aria-hidden="true"></svg>
+      <div class="scale-bar" id="scale-bar"><span>0</span><span>1</span><span>2m</span><i></i><small>随缩放校准</small></div>
+      <div class="loading" id="loading"><span class="spinner"></span><p>正在展开你的家…</p></div>
+      <div id="fallback" hidden><img src="./dimension-plan.svg" alt="参考模型尺寸图，含各房间面积、最大长宽和2米标尺，非20楼实测。"><p>当前浏览器未能显示3D，已显示带面积、尺寸和标尺的平面图。</p></div>
+      <div class="orbit-tools" aria-label="视角操作">
+        <button class="icon-button" id="rotate-left" aria-label="向左旋转"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4 4 8l4 4M4 8h10a6 6 0 0 1 0 12h-4"/></svg></button>
+        <button class="icon-button" id="zoom-in" aria-label="放大"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M12 5v14"/></svg></button>
+        <button class="icon-button" id="zoom-out" aria-label="缩小"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14"/></svg></button>
+        <button class="icon-button" id="reset" aria-label="恢复全屋视角"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4M8 12h8m-4-4v8"/></svg></button>
+      </div>
+      <div class="view-bottom"><p id="gesture-hint">单指平移 · 双指缩放</p><div class="segmented" aria-label="选择视图"><button id="plan-view" aria-pressed="true">尺寸图</button><button id="three-view" aria-pressed="false">3D立体</button></div></div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-heading"><h2 id="room-title">全屋面积</h2><span id="room-number">7楼参考模型</span></div>
+      <div class="area-summary"><div><p id="area-label">模型地面合计 · 含主阳台</p><strong id="area-value">57.79</strong><span>㎡</span></div><div class="advertised"><p>房源建筑面积</p><strong>64.3</strong><span>㎡</span></div></div>
+      <nav class="rooms" aria-label="定位房间">
+        <button data-room="all" aria-pressed="true">全屋</button><button data-room="12" aria-pressed="false">客餐厅</button><button data-room="7" aria-pressed="false">主卧</button><button data-room="3" aria-pressed="false">次卧</button><button data-room="4" aria-pressed="false">卫生间</button><button data-room="13" aria-pressed="false">餐厨</button><button data-room="0" aria-pressed="false">主阳台</button>
+      </nav>
+      <div class="room-info" aria-live="polite"><p id="room-description">不含主阳台约53.01㎡（仍含生活阳台）。建筑面积与模型地面面积口径不同，不能直接相减计算公摊。</p><p id="room-metric">最大外轮廓 7.85 × 10.22m · 异形，不能长×宽算面积</p></div>
+      <div class="display-options"><label><input type="checkbox" id="show-dimensions" checked><span class="switch"></span>尺寸线</label><label><input type="checkbox" id="full-walls"><span class="switch"></span>完整墙高</label><label><input type="checkbox" id="show-labels" checked><span class="switch"></span>面积标注</label></div>
+      <details class="area-breakdown"><summary>各房间面积与长宽</summary><table><thead><tr><th scope="col">空间</th><th scope="col">地面面积</th><th scope="col">最大长宽</th></tr></thead><tbody>
+        <tr><th scope="row">主卧</th><td>9.21㎡</td><td>3.17 × 2.91m</td></tr>
+        <tr><th scope="row">次卧</th><td>7.73㎡</td><td>2.96 × 3.09m</td></tr>
+        <tr><th scope="row">卫生间</th><td>3.61㎡</td><td>2.51 × 1.57m</td></tr>
+        <tr><th scope="row">厨房 / 生活阳台</th><td>6.28㎡</td><td>3.52 × 1.94m</td></tr>
+        <tr><th scope="row">客餐厅 / 过道</th><td>26.17㎡</td><td>4.54 × 8.12m</td></tr>
+        <tr><th scope="row">主阳台</th><td>4.78㎡</td><td>3.47 × 1.73m</td></tr>
+      </tbody></table><p>以上为模型地面三角面计算值；除主卧外均有凹凸或弧边。“最大长宽”是包络范围，不是每一段墙长。合计用未舍入原值计算。</p></details>
+      <button class="check-button" id="review"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5m0 2v2"/></svg>7楼与20楼，不直接等同</span><span>查看核对点 ↗</span></button>
+      <p class="footnote">几何与尺寸来自7楼模型，非20楼实测或施工图。</p>
+    </aside>
+  </main>
+
+  <dialog id="details">
+    <div class="dialog-head"><div><p class="eyebrow">MODEL NOTES</p><h2>先核对，再定墙线</h2></div><button class="icon-button" id="close-dialog" aria-label="关闭说明">✕</button></div>
+    <p class="note-intro">你已确认20楼与7楼存在墙体差异。这一版保留7楼原始几何，用于旋转查看与逐处核对；<strong>尚未把不确定的墙体改成20楼定稿。</strong></p>
+    <div class="review-list">
+      <button data-focus="13"><span class="review-index">01</span><span><b>餐厨与生活阳台</b><small>核对开口、照片墙、后端玻璃分隔。柜体和墙体不能只凭广角画面混为一谈。</small></span><span>↗</span></button>
+      <button data-focus="7"><span class="review-index">02</span><span><b>两间卧室的窗边墙线</b><small>20楼视频可见窗边转角与梁。窗洞大小、窗台进深及包柱需再确认。</small></span><span>↗</span></button>
+      <button data-focus="12"><span class="review-index">03</span><span><b>短过道与门旁墙垛</b><small>20楼可见门旁柜、上方横梁及墙垛；门洞净宽与墙线位置尚未实测。</small></span><span>↗</span></button>
+    </div>
+    <div class="source-note"><h3>这版的依据</h3><p>直接读取你提供的7楼DAE模型，保留原始三角面、墙体和门窗。20楼两段视频仅用于核对可见关系，不能从广角画面反推厘米级尺寸。</p><p>模型层高约2.80m；房间数值均是7楼模型参考。建筑面积64.3㎡来自原会话房源信息，与模型地面面积不是同一口径。阳台朝西北为你提供的信息，模型本身没有真北。</p><p>要准确修成20楼，请补一张标出差异的平面图，或指出“哪一面墙向哪边移动／多了或少了哪段墙”；再补对应长度即可逐处替换。</p></div>
+    <details class="reference"><summary>查看可独立打开的尺寸平面图</summary><a href="./dimension-plan.svg" target="_blank" rel="noopener">打开完整尺寸图 ↗</a><img src="./dimension-plan.svg" alt="参考模型尺寸平面图，非20楼实测图" loading="lazy"></details>
+  </dialog>
+  <script type="module">
+    const dialog = document.getElementById('details');
+    for (const id of ['about','review']) document.getElementById(id).onclick = () => dialog.showModal();
+    document.getElementById('close-dialog').onclick = () => dialog.close();
+    dialog.addEventListener('click', e => { if(e.target===dialog && (e.clientX<dialog.getBoundingClientRect().left || e.clientX>dialog.getBoundingClientRect().right || e.clientY<dialog.getBoundingClientRect().top || e.clientY>dialog.getBoundingClientRect().bottom)) dialog.close(); });
+    import('./viewer.js').catch(error => {
+      console.error(error);
+      document.getElementById('loading').hidden = true;
+      document.getElementById('fallback').hidden = false;
+      document.getElementById('scene').hidden = true;
+      document.getElementById('dimensions').hidden = true;
+      document.getElementById('scale-bar').hidden = true;
+      document.getElementById('labels').hidden = true;
+      document.querySelector('.orbit-tools').hidden = true;
+      document.querySelector('.view-bottom').hidden = true;
+      for (const control of document.querySelectorAll('.rooms button, .display-options input')) control.disabled = true;
+    });
+  </script>
+</body>
+</html>
