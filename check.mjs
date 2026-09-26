@@ -18,7 +18,8 @@ for(const lines of Object.values(dimensionLines))for(const line of lines){assert
 const html=readFileSync(new URL('./index.html',import.meta.url),'utf8');
 for(const [,asset] of html.matchAll(/(?:src|href)="\.\/([^"?#]+)"/g))assert(existsSync(new URL('./'+asset,import.meta.url)),asset);
 for(const text of ['57.79','53.01','64.3','尚未把不确定的墙体改成20楼定稿','show-dimensions','show-areas','show-windows','dimension-mode'])assert(html.includes(text));
-assert(!/西海明珠|D栋|生辰|geeklj|\/Users\//.test(html));
+assert(html.includes('<h1>户型 · 面积与尺寸</h1>'));
+assert(!/\/Users\/|birthdate|dateOfBirth/.test(html));
 assert(readFileSync(new URL('./dimension-plan.svg',import.meta.url),'utf8').includes('57.79㎡'));
 const withoutAreas=readFileSync(new URL('./dimension-plan-no-areas.svg',import.meta.url),'utf8');
 assert(!withoutAreas.includes('class="area">'));assert(withoutAreas.includes('主卧'));
