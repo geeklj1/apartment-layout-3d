@@ -137,7 +137,7 @@ function updateDimensions(){
   const scale=$('scale-bar');scale.hidden=mode!=='plan'||!visible;
   if(!scale.hidden){
     const p0=project([0,0]),p1=project([1,0]),ppm=Math.hypot(p1[0]-p0[0],p1[1]-p0[1]);
-    const metres=[.2,.5,1,2,5].find(m=>ppm*m>=70)||5;
+    const metres=[.2,.5,1,2,5].find(m=>ppm*m>=55)||5;
     scale.style.width=ppm*metres+'px';
     scale.children[1].textContent=metres/2;scale.children[2].textContent=metres+'m';
   }
