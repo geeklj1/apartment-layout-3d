@@ -19,15 +19,37 @@ export const totalArea=Object.values(measurements).reduce((sum,m)=>sum+m.area,0)
 export const withoutMainBalcony=totalArea-measurements['0'].area;
 export const outer=measureMesh(model.find(m=>m.name==='1-Wall'));
 export const roomNames={'7':'主卧','3':'次卧','4':'卫生间','12':'客餐厅 / 过道','13':'厨房 / 生活阳台','0':'主阳台'};
+const segment=(a,b,options={})=>({a,b,text:fmt(Math.hypot(b[0]-a[0],b[1]-a[1])),...options});
+const xChain=(xs,z,room)=>xs.slice(1).map((x,i)=>segment([xs[i],z],[x,z],{room,chain:true}));
+const zChain=(zs,x,room)=>zs.slice(1).map((z,i)=>segment([x,zs[i]],[x,z],{room,chain:true}));
+// Chains are projections of real boundary turns. They do not add partitions.
 export const dimensionLines={
-  all:[{a:[outer.min[0],5.82],b:[outer.max[0],5.82],text:`最大外宽 ${fmt(outer.width)}m`},
-       {a:[4.48,outer.min[2]],b:[4.48,outer.max[2]],text:`最大外长 ${fmt(outer.depth)}m`}],
-  '7':[{a:[-2.966,-3.36],b:[.203,-3.36],text:'3.17m'},{a:[-2.7,-3.673],b:[-2.7,-.767],text:'2.91m'}],
-  '3':[{a:[-3.821,1.53],b:[-.866,1.53],text:'最大宽 2.96m'},{a:[-3.55,-1.272],b:[-3.55,1.815],text:'最大长 3.09m'}],
-  '4':[{a:[-2.308,3.22],b:[.203,3.22],text:'最大宽 2.51m'},{a:[-.1,1.935],b:[-.1,3.509],text:'最大长 1.57m'}],
-  '13':[{a:[-1.075,4.9],b:[2.44,4.9],text:'最大宽 3.52m'},{a:[2.15,3.248],b:[2.15,5.187],text:'最大长 1.94m'}],
-  '0':[{a:[.323,-3.29],b:[3.789,-3.29],text:'最大宽 3.47m'},{a:[3.789,-4.786],b:[3.789,-3.053],text:'最大进深 1.73m'}],
-  '12':[{a:[.323,-1.95],b:[3.789,-1.95],text:'客厅净宽 3.47m'},
-        {a:[3.57,-2.933],b:[3.57,5.187],text:'贯通最大长 8.12m'},
-        {a:[2.56,4.5],b:[3.789,4.5],text:'入户净宽 1.23m'}]
+  '7':[segment([-2.966,-3.32],[.203,-3.32],{room:'7'}),segment([-3.23,-3.673],[-3.23,-.767],{room:'7'})],
+  '3':[...xChain([-3.821,-3.086,-.866],2.06,'3'),...zChain([-1.272,-.647,1.815],-4.25,'3')],
+  '4':[...xChain([-2.308,-1.897,.203],4.04,'4'),...zChain([1.935,2.757,3.509],-2.9,'4')],
+  '13':[...xChain([-1.075,.323,2.44],5.52,'13'),...zChain([3.248,3.629,5.187],-2.5,'13')],
+  '0':[segment([.323,-3.29],[3.789,-3.29],{room:'0',labelDy:16}),segment([.08,-3.689],[.08,-3.053],{room:'0'}),segment([4.4,-4.786],[4.4,-3.053],{room:'0'})],
+  '12':[
+    ...zChain([-2.933,-.647,1.815,3.128,5.187],4.4,'12'),
+    segment([.323,-1.8],[3.789,-1.8],{room:'12'}),
+    segment([-.746,.95],[3.789,.95],{room:'12'}),
+    segment([.323,2.3],[3.789,2.3],{room:'12'}),
+    segment([2.56,4.35],[3.789,4.35],{room:'12'})]
 };
+dimensionLines['13'][2].labelAt=[-3.65,3.18];
+export const overallDimensions=[
+  segment([outer.min[0],5.98],[outer.max[0],5.98],{text:`最大外宽 ${fmt(outer.width)}m`}),
+  segment([4.65,outer.min[2]],[4.65,outer.max[2]],{text:`最大外长 ${fmt(outer.depth)}m`})];
+dimensionLines.all=['7','3','4','13','0','12'].flatMap(id=>dimensionLines[id]);
+export const segmentNotes={
+  '7':'主卧净宽3.17m、净长2.91m；窗台单独显示，不与房间尺寸混在一起。',
+  '3':'横向转折0.74＋2.22m；纵向0.63＋2.46m。缺角是2.22×0.63m，不是0.74m宽。',
+  '4':'横向0.41＋2.10m；纵向0.82＋0.75m。可直接看出卫生间凹角与主体段。',
+  '13':'横向1.40＋2.12m；纵向0.38＋1.56m。按边界折点分段，不代表厨房与生活阳台之间有隔墙。',
+  '12':'净宽分为3.47、4.54、3.47、1.23m。右侧纵向2.29、2.46、1.31、2.06m，按左边墙线折点投影分段，不代表右墙有隔断。',
+  '0':'阳台开口宽3.47m，窄端进深0.64m、宽端1.73m。弧边不拆成几十段短折线。'};
+export const bayWindow={...measureMesh(model.find(m=>m.name==='Layer_1-window_7')),name:'主卧飘窗 / 窗台'};
+// Window component bounds, not measured usable sill size. Do not add this to floor area.
+export const windowDimensions=[
+  segment([bayWindow.min[0],-4.27],[bayWindow.max[0],-4.27],{window:true,text:`${fmt(bayWindow.width)}m`}),
+  segment([-.49,bayWindow.min[2]],[-.49,bayWindow.max[2]],{window:true,text:`${fmt(bayWindow.depth)}m`})];

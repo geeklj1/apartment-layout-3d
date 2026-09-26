@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import { OrbitControls } from './vendor/OrbitControls.js';
 import { model } from './model.js';
-import { measurements, totalArea, withoutMainBalcony, outer, dimensionLines, fmt } from './measurements.js?v=3';
+import { measurements, totalArea, withoutMainBalcony, outer, dimensionLines, overallDimensions, segmentNotes, bayWindow, windowDimensions, fmt } from './measurements.js?v=4';
 
 const $ = id => document.getElementById(id);
 const rooms = {
-  '12':{name:'客餐厅',at:[2.02,.08,.5],color:0xe8ded0,metric:'7楼底模 · 客厅段净宽约3.47m',description:'客厅、餐区与入户通道连通。短过道入口的墙垛和门旁柜体，需要按20楼现场重新核对。'},
+  '12':{name:'客餐厅',at:[2.1,.08,-.35],color:0xe8ded0,metric:'7楼底模 · 客厅段净宽约3.47m',description:'客厅、餐区与入户通道连通。短过道入口的墙垛和门旁柜体，需要按20楼现场重新核对。'},
   '7':{name:'主卧',at:[-1.4,.08,-2.24],color:0xd6c5ad,metric:'7楼底模 · 约3.17 × 2.91m',description:'主卧位于主采光一侧。20楼窗边墙线、飘窗及窗洞大小尚未实测，当前显示7楼原模型。'},
   '3':{name:'次卧',at:[-2.32,.08,.62],color:0xdad0bd,metric:'7楼底模 · 最大外包约2.96 × 3.09m',description:'房间带转折，最大长宽不代表完整矩形。20楼窗角、梁和柜体边界要分开核对。'},
   '4':{name:'卫生间',at:[-1.08,.08,2.76],color:0xc9dce0,metric:'7楼底模 · 最大外包约2.51 × 1.57m',description:'视频可见门朝卧室短过道。干湿分离待20楼净尺寸、排污点和窗位确认后，再放入设计方案。'},
@@ -52,6 +52,7 @@ const clip = new THREE.Plane(new THREE.Vector3(0,-1,0),.95);
 const floorMeshes=[];const clippedMaterials=[];const labels=[];
 const floorGroup = new THREE.Group();scene.add(floorGroup);
 const wallGroup = new THREE.Group();scene.add(wallGroup);
+const windowComponents=[];
 
 for(const data of model){
   const geometry = new THREE.BufferGeometry();
@@ -65,6 +66,7 @@ for(const data of model){
   if(isGlass){mat.transparent=true;mat.opacity=.38;mat.depthWrite=false;}
   if(data.name.includes('door')&&!isGlass){mat.transparent=true;mat.opacity=.6;}
   const mesh = new THREE.Mesh(geometry,mat);
+  if(/window_(7|6)$/.test(data.name)){windowComponents.push(mesh);mat.color.setHex(0x55aabd);mat.opacity=.65;}
   mesh.receiveShadow=true;mesh.castShadow=!isGlass;
   if(isFloor){mesh.position.y=.008;mesh.userData.room=roomId;floorMeshes.push(mesh);floorGroup.add(mesh);}else wallGroup.add(mesh);
   const edges=new THREE.EdgesGeometry(geometry,35);
@@ -88,12 +90,25 @@ for(let i=0;i<wallData.index.length;i+=3){
 const sectionLine=new THREE.LineSegments(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(sectionPositions,3)),new THREE.LineBasicMaterial({color:0x657580,transparent:true,opacity:.55}));
 section.add(sectionLine);
 
+// The raised sill is explicitly schematic and uses only the supplied window bounds.
+const windowGroup=new THREE.Group();scene.add(windowGroup);
+const sill=new THREE.Mesh(new THREE.BoxGeometry(bayWindow.width,.09,bayWindow.depth),new THREE.MeshStandardMaterial({color:0x419aaf,roughness:.55}));
+sill.position.set((bayWindow.min[0]+bayWindow.max[0])/2,bayWindow.min[1]-.045,(bayWindow.min[2]+bayWindow.max[2])/2);sill.castShadow=true;windowGroup.add(sill);
+const sillEdges=new THREE.LineSegments(new THREE.EdgesGeometry(sill.geometry),new THREE.LineBasicMaterial({color:0x257187}));sill.add(sillEdges);
+const glass=new THREE.Mesh(new THREE.BoxGeometry(bayWindow.width,bayWindow.max[1]-bayWindow.min[1],.018),new THREE.MeshStandardMaterial({color:0x7ac5d6,transparent:true,opacity:.26,roughness:.3,depthWrite:false}));
+glass.position.set(sill.position.x,(bayWindow.min[1]+bayWindow.max[1])/2,bayWindow.min[2]+.012);windowGroup.add(glass);
+const unknownWindowMarker=new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-3.83,.94,-1.4),new THREE.Vector3(-3.08,.94,-1.4)]),new THREE.LineDashedMaterial({color:0x2489a0,dashSize:.07,gapSize:.04}));unknownWindowMarker.computeLineDistances();windowGroup.add(unknownWindowMarker);
+
 for(const [id,room] of Object.entries(rooms)){
   const m=measurements[id];
   const el=document.createElement('span');el.className='room-label';
   el.innerHTML=`<span>${room.name}</span><b>${fmt(m.area)}<small> ㎡</small></b><em>${id==='7'?'':'最大 '}${fmt(m.width)} × ${fmt(m.depth)}m</em>`;
   el.dataset.room=id;$('labels').append(el);
   labels.push({el,point:new THREE.Vector3(...room.at),id});
+}
+for(const item of [{text:'飘窗 / 窗台',at:[-1.455,.8,-4.06],type:'known'},{text:'转角窗 · 待测',at:[-3.455,.94,-1.45],type:'unknown'}]){
+  const el=document.createElement('span');el.className='window-label '+item.type;el.textContent=item.text;el.onclick=()=>showRoom('windows');$('labels').append(el);
+  labels.push({el,point:new THREE.Vector3(...item.at),window:true});
 }
 const pendingPoints=[{at:[.43,1.04,3.22],text:'01 待核对'},{at:[-2.7,1.04,-3.66],text:'02 待核对'},{at:[.34,1.04,.78],text:'03 待核对'}];
 const pendingGroup=new THREE.Group();scene.add(pendingGroup);
@@ -106,17 +121,18 @@ for(const point of pendingPoints){
 let selected='all',mode='plan';
 function updateLabels(){
   const {width,height}=container.getBoundingClientRect();
+  $('labels').classList.toggle('hide-areas',!$('show-areas').checked);
   const occupied=[];
   for(const label of labels){
     const p=label.point.clone().project(camera);
     const x=(p.x*.5+.5)*width,y=(-p.y*.5+.5)*height-(label.pending?15:0);
     label.el.style.left=x+'px';label.el.style.top=y+'px';
-    const show=$('show-labels').checked && (!label.pending||!$('show-dimensions').checked) && p.z<1 && p.z>-1 && x>10&&x<width-10&&y>55&&y<height-58;
+    const show=(selected!=='windows'||label.window)&&(!label.window||$('show-windows').checked)&&(!label.pending||!$('show-dimensions').checked) && p.z<1 && p.z>-1 && x>10&&x<width-10&&y>55&&y<height-58;
     label.el.classList.toggle('selected',label.id===selected);
     if(show){
       const w=label.el.offsetWidth||75;
       const overlaps=occupied.some(o=>Math.abs(x-o.x)<(w+o.w)/2+3&&Math.abs(y-o.y)<52);
-      label.el.style.visibility=overlaps&&mode!=='plan'&&label.id!==selected&&!label.pending?'hidden':'visible';
+      label.el.style.visibility=overlaps&&mode!=='plan'&&label.id!==selected&&!label.pending&&!label.window?'hidden':'visible';
       if(!overlaps)occupied.push({x,y,w});
     }else label.el.style.visibility='hidden';
   }
@@ -126,14 +142,21 @@ function updateDimensions(){
   overlay.setAttribute('viewBox',`0 0 ${w} ${h}`);
   const visible=$('show-dimensions').checked;
   const project=([x,z])=>{const p=new THREE.Vector3(x,$('full-walls').checked?2.82:1.02,z).project(camera);return [(p.x*.5+.5)*w,(-p.y*.5+.5)*h];};
-  overlay.innerHTML=visible?(dimensionLines[selected]||[]).map(d=>{
+  const lines=selected==='windows'?windowDimensions:($('dimension-mode').value==='overall'&&selected==='all'?overallDimensions:dimensionLines[selected]||[]);
+  const dimensionText=[];
+  overlay.innerHTML=visible?lines.map(d=>{
     const a=project(d.a),b=project(d.b),dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
-    if(len<20)return '';
+    if(len<3)return '';
     const nx=-dy/len*5,ny=dx/len*5;
     let angle=Math.atan2(dy,dx)*180/Math.PI;if(angle>90)angle-=180;if(angle<-90)angle+=180;
-    return `<g class="dimension"><path d="M${a}L${b}M${a[0]-nx},${a[1]-ny}L${a[0]+nx},${a[1]+ny}M${b[0]-nx},${b[1]-ny}L${b[0]+nx},${b[1]+ny}"/><text text-anchor="middle" transform="translate(${(a[0]+b[0])/2},${(a[1]+b[1])/2}) rotate(${angle})" dy="-6">${d.text}</text></g>`;
-  }).join(''):'';
+    const callout=selected==='all'&&d.labelAt;
+    const midpoint=[(a[0]+b[0])/2,(a[1]+b[1])/2],position=callout?project(d.labelAt):midpoint;
+    const klass=`dimension ${d.chain?'chain':''} ${d.window?'window-dimension':''}`;
+    dimensionText.push(`<g class="${klass}"><text text-anchor="middle" transform="translate(${position}) rotate(${callout?0:angle})" dy="${d.labelDy??-5}">${d.text}</text></g>`);
+    return `<g class="${klass}"><path d="M${a}L${b}M${a[0]-nx},${a[1]-ny}L${a[0]+nx},${a[1]+ny}M${b[0]-nx},${b[1]-ny}L${b[0]+nx},${b[1]+ny}"/>${callout?`<path class="dimension-leader" d="M${midpoint}L${position}"/>`:''}</g>`;
+  }).join('')+dimensionText.join(''):'';
   pendingGroup.visible=!visible;
+  windowGroup.visible=$('show-windows').checked;
   const scale=$('scale-bar');scale.hidden=mode!=='plan'||!visible;
   if(!scale.hidden){
     const p0=project([0,0]),p1=project([1,0]),ppm=Math.hypot(p1[0]-p0[0],p1[1]-p0[1]);
@@ -153,17 +176,28 @@ function fit(){
 }
 function showRoom(id){
   selected=id;
+  $('window-detail').hidden=id!=='windows';$('area-unit').textContent=id==='windows'?'m':'㎡';
+  document.querySelector('.area-summary').classList.toggle('window-mode',id==='windows');
   for(const button of document.querySelectorAll('[data-room]'))if(button.tagName==='BUTTON')button.setAttribute('aria-pressed',String(button.dataset.room===id));
   for(const mesh of floorMeshes){const room=rooms[mesh.userData.room];mesh.material.color.setHex(mesh.userData.room===id?0xb6cddd:room.color);}
   const room=rooms[id];
-  if(room){
+  if(id==='windows'){
+    $('show-windows').checked=true;
+    $('room-title').textContent='飘窗与窗台';$('area-value').textContent=fmt(bayWindow.width);$('area-label').textContent='主卧模型窗构件宽度';$('room-number').textContent='构件范围 · 非实测';
+    $('room-description').textContent='蓝色台面把窗台从地面、墙体中单独区分。20楼窗台真实进深和转角尚未量测，不伪造尺寸。';
+    $('room-metric').textContent=`模型窗构件：宽${fmt(bayWindow.width)}m · 总进深${fmt(bayWindow.depth)}m · 底缘高${fmt(bayWindow.min[1])}m`;
+    $('dimension-note').textContent='蓝色为按底模范围示意的窗台，虚线为20楼视频提示的待核对窗位。';
+    controls.target.set(-1.8,.45,-2.7);camera.zoom=1.6;setView('3d');
+  }else if(room){
     $('room-title').textContent=room.name;$('room-description').textContent=room.description;$('room-metric').textContent=room.metric;$('room-number').textContent='REFERENCE';
     const m=measurements[id];$('area-value').textContent=fmt(m.area);$('area-label').textContent='房间模型地面面积';
     $('room-metric').textContent=`${id==='7'?'室内长宽':'最大外包'} ${fmt(m.width)} × ${fmt(m.depth)}m${id==='12'?' · 客厅段净宽3.47m':''}`;
-    const target=new THREE.Vector3(...room.at);target.y=.1;
-    const offset=camera.position.clone().sub(controls.target);controls.target.copy(target);camera.position.copy(target).add(offset);camera.zoom=1.65;
+    $('dimension-note').textContent=segmentNotes[id];
+    const target=new THREE.Vector3((m.min[0]+m.max[0])/2,.1,(m.min[2]+m.max[2])/2);
+    const offset=camera.position.clone().sub(controls.target);controls.target.copy(target);camera.position.copy(target).add(offset);camera.zoom=id==='12'?1.15:1.65;
   }else{
-    $('room-title').textContent='全屋面积';$('room-description').textContent=`不含主阳台约${fmt(withoutMainBalcony)}㎡（仍含生活阳台）。建筑面积与模型地面面积口径不同，不能直接相减计算公摊。`;$('room-metric').textContent=`最大外轮廓 ${fmt(outer.width)} × ${fmt(outer.depth)}m · 异形，不能长×宽算面积`;$('room-number').textContent='7楼参考模型';
+    $('room-title').textContent='全屋面积';$('room-description').textContent=`不含主阳台约${fmt(withoutMainBalcony)}㎡（仍含生活阳台）。建筑面积与模型地面面积口径不同，不能直接相减计算公摊。`;$('room-metric').textContent='默认分段尺寸 · 单位m · 点房间看局部，右上可切总外轮廓';$('room-number').textContent='7楼参考模型';
+    $('dimension-note').textContent='尺寸链按边界折点投影分段，不是新增隔墙。短段可放大或点选房间查看。';
     $('area-value').textContent=fmt(totalArea);$('area-label').textContent='模型地面合计 · 含主阳台';
     controls.target.set(.2,.1,.58);camera.zoom=1;
     camera.position.copy(controls.target).add(mode==='plan'?new THREE.Vector3(0,22,.001):new THREE.Vector3(7,15,11));
@@ -188,7 +222,9 @@ for(const button of document.querySelectorAll('[data-focus]'))button.onclick=()=
 $('three-view').onclick=()=>setView('3d');$('plan-view').onclick=()=>setView('plan');$('reset').onclick=()=>showRoom('all');
 $('zoom-in').onclick=()=>zoom(1.22);$('zoom-out').onclick=()=>zoom(1/1.22);$('rotate-left').onclick=()=>rotate(-Math.PI/8);
 $('full-walls').onchange=()=>{clip.constant=$('full-walls').checked?3:.95;section.visible=!$('full-walls').checked;render();};
-$('show-labels').onchange=render;$('show-dimensions').onchange=render;
+$('show-areas').onchange=()=>{$('area-quick').setAttribute('aria-pressed',String($('show-areas').checked));render();};
+$('area-quick').onclick=()=>{$('show-areas').checked=!$('show-areas').checked;$('show-areas').onchange();};
+$('show-dimensions').onchange=render;$('show-windows').onchange=render;$('dimension-mode').onchange=render;
 container.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){rotate(-.15);e.preventDefault();}if(e.key==='ArrowRight'){rotate(.15);e.preventDefault();}if(e.key==='+'||e.key==='=')zoom(1.15);if(e.key==='-')zoom(1/1.15);if(e.key==='Home')showRoom('all');});
 let pointerStart;
 container.addEventListener('pointerdown',e=>{pointerStart=[e.clientX,e.clientY];});
