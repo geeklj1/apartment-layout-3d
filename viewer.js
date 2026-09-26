@@ -175,6 +175,7 @@ function setView(next){
   if(mode==='plan'){$('full-walls').checked=false;clip.constant=.95;section.visible=true;}
   camera.position.copy(target).add(mode==='plan'?new THREE.Vector3(0,22,.001):new THREE.Vector3(7,15,11));
   controls.enableRotate=mode!=='plan';
+  controls.mouseButtons.LEFT=mode==='plan'?THREE.MOUSE.PAN:THREE.MOUSE.ROTATE;
   controls.touches.ONE=mode==='plan'?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;
   $('three-view').setAttribute('aria-pressed',String(mode==='3d'));$('plan-view').setAttribute('aria-pressed',String(mode==='plan'));
   $('gesture-hint').textContent=mode==='plan'?'单指平移 · 双指缩放':'单指旋转 · 双指缩放 / 平移';
