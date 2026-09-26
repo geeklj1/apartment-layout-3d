@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from './vendor/OrbitControls.js';
 import { model } from './model.js';
-import { measurements, totalArea, withoutMainBalcony, outer, dimensionLines, fmt } from './measurements.js';
+import { measurements, totalArea, withoutMainBalcony, outer, dimensionLines, fmt } from './measurements.js?v=3';
 
 const $ = id => document.getElementById(id);
 const rooms = {

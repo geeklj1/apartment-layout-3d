@@ -8,7 +8,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>户型 · 面积与尺寸</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23273643'/%3E%3Cpath d='M8 24V8h9v6h7v10zm9-10v10M8 17h9' fill='none' stroke='%23e4ceb0' stroke-width='2'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=3">
   <script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
 </head>
 <body>
@@ -25,7 +25,7 @@
       <svg id="dimensions" aria-hidden="true"></svg>
       <div class="scale-bar" id="scale-bar"><span>0</span><span>1</span><span>2m</span><i></i><small>随缩放校准</small></div>
       <div class="loading" id="loading"><span class="spinner"></span><p>正在展开你的家…</p></div>
-      <div id="fallback" hidden><img src="./dimension-plan.svg" alt="参考模型尺寸图，含各房间面积、最大长宽和2米标尺，非20楼实测。"><p>当前浏览器未能显示3D，已显示带面积、尺寸和标尺的平面图。</p></div>
+      <div id="fallback" hidden><img src="./dimension-plan.svg?v=3" alt="参考模型尺寸图，含各房间面积、最大长宽和2米标尺，非20楼实测。"><p>当前浏览器未能显示3D，已显示带面积、尺寸和标尺的平面图。</p></div>
       <div class="orbit-tools" aria-label="视角操作">
         <button class="icon-button" id="rotate-left" aria-label="向左旋转"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4 4 8l4 4M4 8h10a6 6 0 0 1 0 12h-4"/></svg></button>
         <button class="icon-button" id="zoom-in" aria-label="放大"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M12 5v14"/></svg></button>
@@ -65,14 +65,14 @@
       <button data-focus="12"><span class="review-index">03</span><span><b>短过道与门旁墙垛</b><small>20楼可见门旁柜、上方横梁及墙垛；门洞净宽与墙线位置尚未实测。</small></span><span>↗</span></button>
     </div>
     <div class="source-note"><h3>这版的依据</h3><p>直接读取你提供的7楼DAE模型，保留原始三角面、墙体和门窗。20楼两段视频仅用于核对可见关系，不能从广角画面反推厘米级尺寸。</p><p>模型层高约2.80m；房间数值均是7楼模型参考。建筑面积64.3㎡来自原会话房源信息，与模型地面面积不是同一口径。阳台朝西北为你提供的信息，模型本身没有真北。</p><p>要准确修成20楼，请补一张标出差异的平面图，或指出“哪一面墙向哪边移动／多了或少了哪段墙”；再补对应长度即可逐处替换。</p></div>
-    <details class="reference"><summary>查看可独立打开的尺寸平面图</summary><a href="./dimension-plan.svg" target="_blank" rel="noopener">打开完整尺寸图 ↗</a><img src="./dimension-plan.svg" alt="参考模型尺寸平面图，非20楼实测图" loading="lazy"></details>
+    <details class="reference"><summary>查看可独立打开的尺寸平面图</summary><a href="./dimension-plan.svg?v=3" target="_blank" rel="noopener">打开完整尺寸图 ↗</a><img src="./dimension-plan.svg?v=3" alt="参考模型尺寸平面图，非20楼实测图" loading="lazy"></details>
   </dialog>
   <script type="module">
     const dialog = document.getElementById('details');
     for (const id of ['about','review']) document.getElementById(id).onclick = () => dialog.showModal();
     document.getElementById('close-dialog').onclick = () => dialog.close();
     dialog.addEventListener('click', e => { if(e.target===dialog && (e.clientX<dialog.getBoundingClientRect().left || e.clientX>dialog.getBoundingClientRect().right || e.clientY<dialog.getBoundingClientRect().top || e.clientY>dialog.getBoundingClientRect().bottom)) dialog.close(); });
-    import('./viewer.js').catch(error => {
+    import('./viewer.js?v=3').catch(error => {
       console.error(error);
       document.getElementById('loading').hidden = true;
       document.getElementById('fallback').hidden = false;
