@@ -7,9 +7,9 @@
   <meta name="description" content="参考户型的春分、夏至、秋分、冬至交互式日照示意。">
   <meta name="robots" content="noindex,nofollow">
   <title>一天的光｜四季房间日照示意</title>
-  <link rel="stylesheet" href="./style.css?v=2">
+  <link rel="stylesheet" href="./style.css?v=3">
   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
-  <script type="module" src="./app.js?v=4"></script>
+  <script type="module" src="./app.js?v=6"></script>
 </head>
 <body>
   <div class="page-shell">
@@ -26,28 +26,29 @@
 
       <section class="workspace" aria-label="交互式日照示意">
         <div class="model-card">
-          <div class="model-head"><div><span class="live-dot"></span><span id="scene-status">春分 · 参考日照</span></div><span>拖动旋转 · 双指缩放</span></div>
+          <div class="model-head"><div><span class="live-dot"></span><span id="scene-status">夏至 · 参考日照</span></div><span>拖动旋转 · 双指缩放</span></div>
           <div class="scene-wrap" id="scene-wrap">
             <div id="scene" role="img" aria-label="交互式三维户型日照示意"></div>
             <div class="scene-overlay compass" aria-hidden="true"><b id="north-arrow">N</b><span>方位约示意</span></div>
             <div class="scene-overlay sun-badge" aria-live="polite"><span class="badge-sun" aria-hidden="true"></span><strong id="sun-state">太阳在天空中</strong><small id="sun-direction">方位 0° · 高度 0°</small></div>
+            <div class="scene-overlay light-readout"><span class="readout-icon" aria-hidden="true">☀</span><div><small>此刻屋内</small><strong id="lit-rooms" aria-live="polite">正在计算光照</strong><span id="lit-detail">橙色地面为阳光落点</span></div></div>
             <div class="scene-actions"><button type="button" id="view-reset" aria-label="恢复默认三维视角">重置视角</button><button type="button" id="view-top" aria-label="切换俯视视角">俯视</button></div>
             <div id="webgl-fallback" class="webgl-fallback" hidden><img src="../dimension-plan-no-areas.svg" alt="户型参考平面图"><p>当前浏览器无法显示 3D，太阳轨迹和日出日落时间仍可查看。</p></div>
           </div>
-          <div class="model-foot"><span><i class="legend-dot sunshine"></i>直射光</span><span><i class="legend-dot shadow"></i>室内阴影</span><span><i class="legend-dot obstruction"></i>周边遮挡假设</span><span>参考底模 · 非现场实测</span></div>
+          <div class="model-foot"><span><i class="legend-dot sunshine"></i>橙色地面＝直射</span><span><i class="legend-dot shadow"></i>灰色地面＝无直射</span><span><i class="legend-dot obstruction"></i>周边遮挡假设</span><span>参考底模 · 非现场实测</span></div>
         </div>
 
         <aside class="control-card" aria-label="日期、时间和遮挡设置">
           <div class="control-heading"><p class="eyebrow">01 / 选择季节</p><h2>四季，一间房</h2></div>
           <div class="season-grid" role="group" aria-label="选择节气">
-            <button type="button" data-season="spring" class="season active" aria-pressed="true"><span>春分</span><small>03 / 20</small></button>
-            <button type="button" data-season="summer" class="season" aria-pressed="false"><span>夏至</span><small>06 / 21</small></button>
+            <button type="button" data-season="spring" class="season" aria-pressed="false"><span>春分</span><small>03 / 20</small></button>
+            <button type="button" data-season="summer" class="season active" aria-pressed="true"><span>夏至</span><small>06 / 21</small></button>
             <button type="button" data-season="autumn" class="season" aria-pressed="false"><span>秋分</span><small>09 / 23</small></button>
             <button type="button" data-season="winter" class="season" aria-pressed="false"><span>冬至</span><small>12 / 22</small></button>
           </div>
 
-          <div class="time-section"><div class="section-line"><div><p class="eyebrow">02 / 推移时间</p><h2 id="time-display">12:00</h2></div><button type="button" class="play-button" id="play" aria-label="播放日出到日落动画"><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">播放一天</span></button></div>
-            <label class="sr-only" for="time-range">北京时间</label><input id="time-range" type="range" min="360" max="1110" step="2" value="720">
+          <div class="time-section"><div class="section-line"><div><p class="eyebrow">02 / 推移时间</p><h2 id="time-display">16:00</h2></div><button type="button" class="play-button" id="play" aria-label="播放日出到日落动画"><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">播放一天</span></button></div>
+            <label class="sr-only" for="time-range">北京时间</label><input id="time-range" type="range" min="360" max="1110" step="2" value="960">
             <div class="time-ends"><span><i>日出</i><b id="sunrise">06:00</b></span><span><i>日落</i><b id="sunset">18:00</b></span></div>
           </div>
 
@@ -64,7 +65,7 @@
 
       <section class="trajectory" aria-labelledby="trajectory-title"><div class="trajectory-head"><div><p class="eyebrow">03 / 太阳轨迹</p><h2 id="trajectory-title">从日出到日落</h2></div><p>曲线表示太阳高度角；<span class="block-key"></span>深色区段表示前方高层情景中可能被遮挡。</p></div><svg id="sun-chart" viewBox="0 0 860 180" role="img" aria-label="所选节气的太阳高度随时间变化曲线"></svg><div class="chart-labels"><span id="chart-start">06:00</span><span>正午</span><span id="chart-end">18:00</span></div></section>
 
-      <section class="notes" aria-labelledby="notes-title"><div><p class="eyebrow">方法与边界</p><h2 id="notes-title">如何理解这张图</h2></div><div class="note-grid"><p><b>房间</b>采用你此前提供的同户型 7 楼三维底模；20 楼墙线、窗、梁与飘窗仍待复尺。主阳台按你给出的“约西北”方向放置，未有罗盘实测角度。</p><p><b>太阳</b>以深圳南山区四舍五入的坐标（22.53°N，113.93°E）和 NOAA 公式计算。页面展示的是几何直射示意；天气、玻璃透光率、栏杆与家具不计入。</p><p><b>周边</b>楼盘资料确认相邻公寓为两栋 30 层；腾讯地图楼栋位置与既有阳台视频用于判断它在视野左侧。楼顶高度、窗到近立面间距与真北方位仍是估计，不能作为采光鉴定或施工依据。</p></div>
+      <section class="notes" aria-labelledby="notes-title"><div><p class="eyebrow">方法与边界</p><h2 id="notes-title">如何理解这张图</h2></div><div class="note-grid"><p><b>房间</b>采用你此前提供的同户型 7 楼三维底模，顶板按模型 2.8 米示意；20 楼墙线、窗、梁与飘窗仍待复尺。主阳台按你给出的“约西北”方向放置，未有罗盘实测角度。</p><p><b>太阳</b>以深圳南山区四舍五入的坐标（22.53°N，113.93°E）和 NOAA 公式计算。橙色地面表示模型窗洞与墙体下的直射范围；天气、玻璃透光率、栏杆与家具不计入。</p><p><b>周边</b>楼盘资料确认相邻公寓为两栋 30 层；腾讯地图楼栋位置与既有阳台视频用于判断它在视野左侧。楼顶高度、窗到近立面间距与真北方位仍是估计，不能作为采光鉴定或施工依据。</p></div>
         <div class="sources"><span>公开来源</span><a href="https://gml.noaa.gov/grad/solcalc/solareqns.PDF" target="_blank" rel="noopener noreferrer">NOAA 太阳位置公式 ↗</a><a href="https://aa.usno.navy.mil/data/Earth_Seasons" target="_blank" rel="noopener noreferrer">USNO 2026 节气 ↗</a><a href="https://m.anjuke.com/sz/community/95372/jiedu/" target="_blank" rel="noopener noreferrer">邻近公寓楼层资料 ↗</a><a href="https://map.qq.com/poi/?sm=2090300366137074628&keyfrom=1" target="_blank" rel="noopener noreferrer">邻楼地图 ↗</a><a href="https://multi-architecture.com/?project=test3" target="_blank" rel="noopener noreferrer">前海学校改造资料 ↗</a></div>
       </section>
     </main>

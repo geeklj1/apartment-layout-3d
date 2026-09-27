@@ -4,11 +4,15 @@ import { model } from '../model.js';
 import { SITE, SEASONS, solarPosition, daylightTimes, clockTime, isBlocked } from './solar.js';
 
 const $ = id => document.getElementById(id);
-const state = { season: SEASONS[0], minute: 720, playing: false, top: false, lastFrame: 0 };
+const state = { season: SEASONS[1], minute: 960, playing: false, top: false, lastFrame: 0 };
 const blocker = { enabled: true, height: 100, distance: 60, bearing: 285, width: 40, observerHeight: 58 };
 const compassNames = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
 const sunColor = new THREE.Color(0xffc978);
-let renderer, camera, controls, scene, sun, roomLabels = [];
+let renderer, camera, controls, scene, sun, sunTiles, roomLabels = [];
+let floorSamples = [], lastTileKey = '';
+const floorMeshes = [], shadowCasters = [];
+const roomNames = { '12': '客餐厅', '7': '主卧', '3': '次卧', '4': '卫生间', '13': '餐厨' };
+const tileSize = 0.32;
 
 function directionName(azimuth) { return compassNames[Math.round(azimuth / 45) % 8]; }
 function sunVector({ azimuth, elevation }) {
@@ -75,6 +79,7 @@ function init3D() {
     sun.target.position.set(0, 0, 0);
     scene.add(sun, sun.target);
     const cut = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1.28);
+    const shadowOnly = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, side: THREE.DoubleSide });
     for (const data of model) {
       const floor = data.name.includes('RoomGround');
       const glass = /window|door_(0|12)$/.test(data.name);
@@ -89,15 +94,26 @@ function init3D() {
       const mesh = new THREE.Mesh(geometry(data), material);
       mesh.receiveShadow = true;
       mesh.castShadow = false;
-      if (floor) mesh.position.y = 0.006;
+      if (floor) {
+        mesh.position.y = 0.006;
+        mesh.userData.room = data.name.split('-').pop();
+        floorMeshes.push(mesh);
+        const roof = new THREE.Mesh(geometry(data), shadowOnly);
+        roof.position.y = 2.8;
+        roof.castShadow = true;
+        roof.updateMatrixWorld();
+        scene.add(roof);
+        shadowCasters.push(roof);
+      }
       scene.add(mesh);
       if (!floor && !glass) {
-        const caster = new THREE.Mesh(wall ? shadowWallGeometry(data) : geometry(data),
-          new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, side: THREE.DoubleSide }));
+        const caster = new THREE.Mesh(wall ? shadowWallGeometry(data) : geometry(data), shadowOnly);
         caster.castShadow = true;
         scene.add(caster);
+        shadowCasters.push(caster);
       }
     }
+    buildSunlitFloor();
     const plinth = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: 0.11 }));
     plinth.rotation.x = -Math.PI / 2; plinth.position.y = -0.015; plinth.receiveShadow = true; scene.add(plinth);
 
@@ -115,6 +131,57 @@ function init3D() {
     $('scene').hidden = true;
     $('webgl-fallback').hidden = false;
   }
+}
+
+function buildSunlitFloor() {
+  const down = new THREE.Raycaster();
+  const south = new THREE.Vector3(0, -1, 0);
+  for (let x = -3.9 + tileSize / 2; x < 3.9; x += tileSize) {
+    for (let z = -4.9 + tileSize / 2; z < 5.3; z += tileSize) {
+      down.set(new THREE.Vector3(x, 1.5, z), south);
+      const hit = down.intersectObjects(floorMeshes, false)[0];
+      if (hit) floorSamples.push({ x, z, room: hit.object.userData.room });
+    }
+  }
+  sunTiles = new THREE.InstancedMesh(
+    new THREE.BoxGeometry(tileSize * 1.015, 0.012, tileSize * 1.015),
+    new THREE.MeshBasicMaterial({ color: 0xffaa43, transparent: true, opacity: 0.82, depthWrite: false, toneMapped: false }),
+    floorSamples.length,
+  );
+  sunTiles.count = 0;
+  sunTiles.frustumCulled = false;
+  sunTiles.renderOrder = 1;
+  scene.add(sunTiles);
+}
+
+function updateSunlitFloor(position, blocked) {
+  if (!sunTiles) return;
+  const key = `${state.season.id}/${state.playing ? Math.round(state.minute / 4) : Math.round(state.minute)}/${blocked}`;
+  if (key === lastTileKey) return;
+  lastTileKey = key;
+  const litRooms = {};
+  let count = 0, balconyCount = 0;
+  if (position.elevation > 0 && !blocked) {
+    const ray = new THREE.Raycaster();
+    ray.far = 100;
+    const direction = sunVector(position).normalize();
+    const matrix = new THREE.Matrix4();
+    for (const sample of floorSamples) {
+      ray.set(new THREE.Vector3(sample.x, 0.032, sample.z), direction);
+      if (ray.intersectObjects(shadowCasters, false).length) continue;
+      matrix.makeTranslation(sample.x, 0.027, sample.z);
+      sunTiles.setMatrixAt(count++, matrix);
+      if (sample.room === '0') balconyCount++;
+      else litRooms[sample.room] = (litRooms[sample.room] || 0) + 1;
+    }
+  }
+  sunTiles.count = count;
+  sunTiles.instanceMatrix.needsUpdate = true;
+  const names = Object.entries(litRooms).filter(([, n]) => n > 2).sort((a, b) => b[1] - a[1]).map(([id]) => roomNames[id]);
+  const status = names.length ? names.join('、') + '有直射' : balconyCount ? '仅阳台有直射' : '室内暂无直射';
+  if ($('lit-rooms').textContent !== status) $('lit-rooms').textContent = status;
+  $('lit-rooms').closest('.light-readout').classList.toggle('empty', !count);
+  $('lit-detail').textContent = blocked ? '前方高层情景遮挡了直射光' : count ? '橙色地面是此刻阳光落点' : '拖动时间寻找阳光进入的时段';
 }
 
 function resize() {
@@ -143,10 +210,10 @@ function render() {
 }
 
 function currentTimes() { return daylightTimes(state.season.date, SITE); }
-function updateSeason(season) {
+function updateSeason(season, initial = false) {
   state.season = season;
   const { sunrise, sunset } = currentTimes();
-  state.minute = (sunrise + sunset) / 2;
+  state.minute = initial ? 960 : (sunrise + sunset) / 2;
   $('time-range').min = Math.ceil(sunrise);
   $('time-range').max = Math.floor(sunset);
   $('time-range').value = Math.round(state.minute);
@@ -178,6 +245,7 @@ function update() {
     sun.position.copy(vector.multiplyScalar(24));
     sun.intensity = visible ? Math.max(0.25, 4.2 * Math.min(1, Math.sin(Math.max(position.elevation, 0) * Math.PI / 180) * 2.5)) : 0;
     sun.color.setHSL(0.10, 0.72, position.elevation < 15 ? 0.57 : 0.72);
+    updateSunlitFloor(position, blocked);
     render();
   }
   drawChart(position);
@@ -255,4 +323,4 @@ for (const id of ['blocker-enabled', 'blocker-height', 'blocker-distance', 'bloc
 $('view-reset').addEventListener('click', () => { if (!camera) return; state.top = false; camera.position.set(12, 16, 18); camera.zoom = 1; camera.updateProjectionMatrix(); controls.target.set(0, 0, 0.1); controls.update(); render(); });
 $('view-top').addEventListener('click', () => { if (!camera) return; state.top = !state.top; camera.position.set(state.top ? 0.001 : 12, state.top ? 24 : 16, state.top ? 0 : 18); camera.lookAt(0, 0, 0); controls.update(); $('view-top').textContent = state.top ? '立体' : '俯视'; render(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden) togglePlay(false); });
-updateSeason(state.season);
+updateSeason(state.season, true);
