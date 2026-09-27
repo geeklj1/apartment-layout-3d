@@ -189,7 +189,7 @@ function resize() {
   const mount = $('scene');
   const width = Math.max(mount.clientWidth, 1), height = Math.max(mount.clientHeight, 1);
   renderer.setSize(width, height, false);
-  const span = width < 560 ? 13.5 : 12.6;
+  const span = width < 560 ? (height > 430 ? 15 : 13.5) : 12.6;
   camera.left = -span * width / height / 2;
   camera.right = span * width / height / 2;
   camera.top = span / 2; camera.bottom = -span / 2;
