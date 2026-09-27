@@ -5,7 +5,7 @@ import { SITE, SEASONS, solarPosition, daylightTimes, clockTime, isBlocked } fro
 
 const $ = id => document.getElementById(id);
 const state = { season: SEASONS[0], minute: 720, playing: false, top: false, lastFrame: 0 };
-const blocker = { enabled: true, height: 100, distance: 60, bearing: 300, width: 50, observerHeight: 58 };
+const blocker = { enabled: true, height: 100, distance: 60, bearing: 285, width: 40, observerHeight: 58 };
 const compassNames = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
 const sunColor = new THREE.Color(0xffc978);
 let renderer, camera, controls, scene, sun, roomLabels = [];
@@ -189,7 +189,7 @@ function drawChart(position) {
   const x = minute => left + (minute - sunrise) / (sunset - sunrise) * (right - left);
   const y = altitude => bottom - Math.max(0, altitude) / 90 * (bottom - top);
   const samples = [];
-  for (let minute = sunrise; minute <= sunset; minute += (sunset - sunrise) / 90) samples.push({ minute, ...solarPosition(state.season.date, minute, SITE) });
+  for (let minute = sunrise; minute <= sunset; minute += (sunset - sunrise) / 180) samples.push({ minute, ...solarPosition(state.season.date, minute, SITE) });
   samples.push({ minute: sunset, ...solarPosition(state.season.date, sunset, SITE) });
   const path = samples.map((p, i) => `${i ? 'L' : 'M'}${x(p.minute).toFixed(1)},${y(p.elevation).toFixed(1)}`).join(' ');
   const area = `${path} L${right},${bottom} L${left},${bottom} Z`;
