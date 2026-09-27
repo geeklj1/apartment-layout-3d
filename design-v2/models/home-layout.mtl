@@ -1,0 +1,119 @@
+# Units: metres; coordinate system: Y-up
+newmtl wall
+Kd 0.933333 0.917647 0.882353
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl floor
+Kd 0.874510 0.847059 0.784314
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl wood
+Kd 0.780392 0.678431 0.533333
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl cabinet
+Kd 0.870588 0.858824 0.819608
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl linen
+Kd 0.862745 0.882353 0.866667
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl pillow
+Kd 0.949020 0.937255 0.874510
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl accent
+Kd 0.529412 0.619608 0.670588
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl seat
+Kd 0.709804 0.760784 0.749020
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl door
+Kd 0.721569 0.623529 0.482353
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl appliance
+Kd 0.835294 0.858824 0.858824
+Ks 0.1500 0.1500 0.1500
+d 1
+Ns 30
+illum 2
+
+newmtl metal
+Kd 0.517647 0.568627 0.560784
+Ks 0.7500 0.7500 0.7500
+d 1
+Ns 30
+illum 2
+
+newmtl screen
+Kd 0.188235 0.239216 0.258824
+Ks 0.1500 0.1500 0.1500
+d 1
+Ns 30
+illum 2
+
+newmtl worktop
+Kd 0.941176 0.929412 0.890196
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl glass
+Kd 0.705882 0.819608 0.850980
+Ks 0.0000 0.0000 0.0000
+d 0.23
+Ns 5
+illum 2
+
+newmtl mirror
+Kd 0.717647 0.807843 0.815686
+Ks 0.8500 0.8500 0.8500
+d 1
+Ns 30
+illum 2
+
+newmtl light
+Kd 1.000000 0.956863 0.847059
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
+
+newmtl conditional
+Kd 0.737255 0.729412 0.647059
+Ks 0.0000 0.0000 0.0000
+d 1
+Ns 5
+illum 2
