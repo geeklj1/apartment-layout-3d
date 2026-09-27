@@ -4,7 +4,7 @@ const stateField=$('state-field'),stateHome=stateField.parentElement,mobileLayou
 function arrange(){if(mobileLayout.matches)$('mobile-state').append(stateField);else stateHome.insertBefore(stateField,$('state-note'));}
 mobileLayout.addEventListener('change',arrange);arrange();
 let architecture,architectureMarks=[],data,mode='3d',scene,camera,renderer,controls,outline,dirty=false,active=true,custom={};
-const assetVersion='20260927-seat420';
+const assetVersion='20260927-four550';
 const coarse=matchMedia('(pointer:coarse)').matches||innerWidth<=720,reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 const roomNames={whole:'全屋',living:'客餐厅',master:'主卧',second:'次卧',kitchen:'厨房与设备',bath:'卫生间',balcony:'主阳台','entry-eye':'入户视角'};
 const labels={'master-bed':'主卧床','second-bed':'次卧床','master-wardrobe':'主卧衣柜','second-wardrobe':'次卧衣柜',vanity:'梳妆组合','vanity-stool':'梳妆凳','master-door-cabinet':'主卧门头柜','second-window-cabinet':'窗下浅柜',sofa:'沙发','tv-unit':'电视低柜','tv-screen':'电视','tv-upper':'电视浅上柜','dining-table':'餐桌','dining-chair-north':'北餐椅','dining-chair-south':'南餐椅','shoe-bag-cabinet':'鞋包柜',fridge:'冰箱安装组合','oven-tower':'蒸烤/微波柜',robot:'机器人组合',sideboard:'浅餐边柜','service-scribe':'末端收口',kitchen:'厨房组合',purifier:'净水器',shower:'淋浴湿区','bath-basin':'洗手盆柜','bath-mirror':'浴室镜柜',toilet:'马桶',washer:'洗衣机','laundry-counter':'独立洗衣台','water-heater':'燃气热水器','utility-storage':'生活阳台低柜','balcony-housekeeping':'家政柜','drying-rack':'晾衣架','ac-master':'主卧挂机','ac-second':'次卧挂机','ac-living':'客厅挂机','entry-door':'户门','master-door':'主卧门','second-door':'次卧门','bath-door':'浴室门','kitchen-door':'厨房门','balcony-door':'阳台门'};
