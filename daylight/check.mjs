@@ -11,8 +11,8 @@ for (const season of SEASONS) {
 }
 assert.ok(durations[1] > durations[0] && durations[0] > durations[3], 'Shenzhen daylight season order');
 assert.ok(solarPosition(SEASONS[1].date, daylightTimes(SEASONS[1].date).noon).elevation > 85, 'summer noon near zenith');
-const scenario = { enabled: true, height: 80, distance: 40, bearing: 245, width: 30, observerHeight: 58 };
-assert.equal(isBlocked({ azimuth: 245, elevation: 10 }, scenario), true);
+const scenario = { enabled: true, height: 100, distance: 60, bearing: 300, width: 50, observerHeight: 58 };
+assert.equal(isBlocked({ azimuth: 300, elevation: 10 }, scenario), true);
 assert.equal(isBlocked({ azimuth: 180, elevation: 10 }, scenario), false);
-assert.equal(isBlocked({ azimuth: 245, elevation: 40 }, scenario), false);
+assert.equal(isBlocked({ azimuth: 300, elevation: 45 }, scenario), false);
 console.log('Solar times, positions, and obstruction scenario: OK');

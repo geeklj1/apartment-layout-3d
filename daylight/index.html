@@ -7,9 +7,9 @@
   <meta name="description" content="参考户型的春分、夏至、秋分、冬至交互式日照示意。">
   <meta name="robots" content="noindex,nofollow">
   <title>一天的光｜四季房间日照示意</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=2">
   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
-  <script type="module" src="./app.js?v=2"></script>
+  <script type="module" src="./app.js?v=3"></script>
 </head>
 <body>
   <div class="page-shell">
@@ -53,19 +53,19 @@
 
           <div class="reading"><div><span>太阳高度</span><strong id="altitude">0°</strong></div><div><span>太阳方位</span><strong id="azimuth">0°</strong></div><div><span>可见日长</span><strong id="day-length">0时0分</strong></div></div>
 
-          <details class="assumptions"><summary>周边遮挡假设 <span id="blocker-summary">已考虑邻楼</span></summary>
-            <p>学校教学楼公开资料为约 5 层，低于本户所在的 20 层，主阳台正前方的直接遮挡预计较小。侧方近楼的确切高度、距离与角度未测量，下方是可调整的情景值。</p>
-            <label class="toggle"><input id="blocker-enabled" type="checkbox" checked><span>显示侧方邻楼遮挡情景</span></label>
-            <div class="assumption-fields"><label>邻楼高度 <output id="blocker-height-value">80 m</output><input id="blocker-height" type="range" min="50" max="110" step="1" value="80"></label><label>水平距离 <output id="blocker-distance-value">40 m</output><input id="blocker-distance" type="range" min="15" max="100" step="1" value="40"></label><label>中心方位 <output id="blocker-bearing-value">245°</output><input id="blocker-bearing" type="range" min="200" max="300" step="1" value="245"></label></div>
-            <p class="small-note">房间高度暂按 20 × 2.9 m ≈ 58 m，邻楼方位角范围暂按 30°。这组参数是情景假设，不代表地图测绘结果。</p>
+          <details class="assumptions"><summary>周边遮挡假设 <span id="blocker-summary">已考虑前方高层</span></summary>
+            <p>公开资料显示相邻公寓有两栋 30 层塔楼。地图点位与小区中心可作粗略定位，但不能替代 20A 窗口到塔楼的测距。教学楼约 5 层，低于本户所在的 20 层，对主阳台的直接遮挡预计较小。</p>
+            <label class="toggle"><input id="blocker-enabled" type="checkbox" checked><span>显示前方高层遮挡情景</span></label>
+            <div class="assumption-fields"><label>塔楼高度 <output id="blocker-height-value">100 m</output><input id="blocker-height" type="range" min="70" max="120" step="1" value="100"></label><label>水平距离 <output id="blocker-distance-value">60 m</output><input id="blocker-distance" type="range" min="20" max="120" step="1" value="60"></label><label>中心方位 <output id="blocker-bearing-value">300°</output><input id="blocker-bearing" type="range" min="260" max="340" step="1" value="300"></label></div>
+            <p id="blocker-effect" class="effect-note" aria-live="polite"></p><p class="small-note">本户高度暂按 20 × 2.9 m ≈ 58 m；塔楼 100 m、60 m 距离、300° 方位和 50° 角宽是地图与层数推算的情景值，不是竣工标高或实测楼间距。</p>
           </details>
         </aside>
       </section>
 
-      <section class="trajectory" aria-labelledby="trajectory-title"><div class="trajectory-head"><div><p class="eyebrow">03 / 太阳轨迹</p><h2 id="trajectory-title">从日出到日落</h2></div><p>曲线表示太阳高度角；<span class="block-key"></span>深色区段表示侧方邻楼情景中可能被遮挡。</p></div><svg id="sun-chart" viewBox="0 0 860 180" role="img" aria-label="所选节气的太阳高度随时间变化曲线"></svg><div class="chart-labels"><span id="chart-start">06:00</span><span>正午</span><span id="chart-end">18:00</span></div></section>
+      <section class="trajectory" aria-labelledby="trajectory-title"><div class="trajectory-head"><div><p class="eyebrow">03 / 太阳轨迹</p><h2 id="trajectory-title">从日出到日落</h2></div><p>曲线表示太阳高度角；<span class="block-key"></span>深色区段表示前方高层情景中可能被遮挡。</p></div><svg id="sun-chart" viewBox="0 0 860 180" role="img" aria-label="所选节气的太阳高度随时间变化曲线"></svg><div class="chart-labels"><span id="chart-start">06:00</span><span>正午</span><span id="chart-end">18:00</span></div></section>
 
-      <section class="notes" aria-labelledby="notes-title"><div><p class="eyebrow">方法与边界</p><h2 id="notes-title">如何理解这张图</h2></div><div class="note-grid"><p><b>房间</b>采用你此前提供的同户型 7 楼三维底模；20 楼墙线、窗、梁与飘窗仍待复尺。主阳台按你给出的“约西北”方向放置，未有罗盘实测角度。</p><p><b>太阳</b>以深圳南山区四舍五入的坐标（22.53°N，113.93°E）和 NOAA 公式计算。页面展示的是几何直射示意；天气、玻璃透光率、栏杆与家具不计入。</p><p><b>周边</b>公开地图用于核对所在区域；建筑师资料提及前方学校约五层。侧方近楼缺少可靠的高度、间距与方位实测，网页用可调整情景展示其潜在影响，不能作为采光鉴定或装修施工依据。</p></div>
-        <div class="sources"><span>公开来源</span><a href="https://gml.noaa.gov/grad/solcalc/solareqns.PDF" target="_blank" rel="noopener noreferrer">NOAA 太阳位置公式 ↗</a><a href="https://aa.usno.navy.mil/data/Earth_Seasons" target="_blank" rel="noopener noreferrer">USNO 2026 节气 ↗</a><a href="https://multi-architecture.com/?project=test3" target="_blank" rel="noopener noreferrer">前海学校改造资料 ↗</a></div>
+      <section class="notes" aria-labelledby="notes-title"><div><p class="eyebrow">方法与边界</p><h2 id="notes-title">如何理解这张图</h2></div><div class="note-grid"><p><b>房间</b>采用你此前提供的同户型 7 楼三维底模；20 楼墙线、窗、梁与飘窗仍待复尺。主阳台按你给出的“约西北”方向放置，未有罗盘实测角度。</p><p><b>太阳</b>以深圳南山区四舍五入的坐标（22.53°N，113.93°E）和 NOAA 公式计算。页面展示的是几何直射示意；天气、玻璃透光率、栏杆与家具不计入。</p><p><b>周边</b>公开楼盘资料确认相邻公寓为两栋 30 层，建筑师资料提及学校约五层。楼顶高度、20A 到具体塔楼的间距与真北方位未核实，网页以可调整情景展示潜在影响，不能作为采光鉴定或施工依据。</p></div>
+        <div class="sources"><span>公开来源</span><a href="https://gml.noaa.gov/grad/solcalc/solareqns.PDF" target="_blank" rel="noopener noreferrer">NOAA 太阳位置公式 ↗</a><a href="https://aa.usno.navy.mil/data/Earth_Seasons" target="_blank" rel="noopener noreferrer">USNO 2026 节气 ↗</a><a href="https://m.anjuke.com/sz/community/95372/jiedu/" target="_blank" rel="noopener noreferrer">邻近公寓楼层资料 ↗</a><a href="https://multi-architecture.com/?project=test3" target="_blank" rel="noopener noreferrer">前海学校改造资料 ↗</a></div>
       </section>
     </main>
     <footer>四季房间日照示意 <span>基于参考模型与公开资料 · 2026</span></footer>

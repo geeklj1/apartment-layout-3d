@@ -5,7 +5,7 @@ import { SITE, SEASONS, solarPosition, daylightTimes, clockTime, isBlocked } fro
 
 const $ = id => document.getElementById(id);
 const state = { season: SEASONS[0], minute: 720, playing: false, top: false, lastFrame: 0 };
-const blocker = { enabled: true, height: 80, distance: 40, bearing: 245, width: 30, observerHeight: 58 };
+const blocker = { enabled: true, height: 100, distance: 60, bearing: 300, width: 50, observerHeight: 58 };
 const compassNames = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
 const sunColor = new THREE.Color(0xffc978);
 let renderer, camera, controls, scene, sun, roomLabels = [];
@@ -171,7 +171,7 @@ function update() {
   $('altitude').textContent = `${Math.max(0, position.elevation).toFixed(1)}°`;
   $('azimuth').textContent = `${position.azimuth.toFixed(0)}° ${directionName(position.azimuth)}`;
   $('sun-direction').textContent = `方位 ${position.azimuth.toFixed(0)}° · 高度 ${Math.max(0, position.elevation).toFixed(1)}°`;
-  $('sun-state').textContent = blocked ? '侧方邻楼可能遮挡' : position.elevation <= 0 ? '太阳位于地平线' : '太阳未被邻楼情景遮挡';
+  $('sun-state').textContent = blocked ? '前方高层可能遮挡' : position.elevation <= 0 ? '太阳位于地平线' : '太阳未被高层情景遮挡';
   $('sun-state').parentElement.classList.toggle('blocked', blocked);
   if (sun) {
     const vector = sunVector(position);
@@ -202,6 +202,9 @@ function drawChart(position) {
       start = null;
     }
   }
+  $('blocker-effect').textContent = !blocker.enabled ? '已关闭高层遮挡情景。' : blocks.length
+    ? `${state.season.label}按当前参数约在 ${clockTime(samples.find(p => isBlocked(p, blocker)).minute)} 至 ${clockTime([...samples].reverse().find(p => isBlocked(p, blocker)).minute)} 可能受遮挡。`
+    : `${state.season.label}的太阳轨迹未进入当前高层遮挡角域。`;
   const cursorX = x(state.minute), cursorY = y(position.elevation);
   $('sun-chart').innerHTML = `<defs><linearGradient id="sun-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e6aa62" stop-opacity=".34"/><stop offset="1" stop-color="#e6aa62" stop-opacity=".015"/></linearGradient></defs>
     <line x1="${left}" y1="${bottom}" x2="${right}" y2="${bottom}" stroke="#c9c9c0" stroke-width="1"/>
@@ -219,7 +222,7 @@ function updateBlocker() {
   $('blocker-height-value').textContent = `${blocker.height} m`;
   $('blocker-distance-value').textContent = `${blocker.distance} m`;
   $('blocker-bearing-value').textContent = `${blocker.bearing}°`;
-  $('blocker-summary').textContent = blocker.enabled ? '已考虑邻楼' : '未计侧方近楼';
+  $('blocker-summary').textContent = blocker.enabled ? '已考虑前方高层' : '未计前方高层';
   update();
 }
 
