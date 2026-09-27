@@ -9,7 +9,7 @@
   <title>一天的光｜四季房间日照示意</title>
   <link rel="stylesheet" href="./style.css?v=3">
   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
-  <script type="module" src="./app.js?v=6"></script>
+  <script type="module" src="./app.js?v=7"></script>
 </head>
 <body>
   <div class="page-shell">
@@ -29,7 +29,7 @@
           <div class="model-head"><div><span class="live-dot"></span><span id="scene-status">夏至 · 参考日照</span></div><span>拖动旋转 · 双指缩放</span></div>
           <div class="scene-wrap" id="scene-wrap">
             <div id="scene" role="img" aria-label="交互式三维户型日照示意"></div>
-            <div class="scene-overlay compass" aria-hidden="true"><b id="north-arrow">N</b><span>方位约示意</span></div>
+            <div class="scene-overlay compass" aria-hidden="true"><b id="north-arrow">N<i id="compass-sun"></i></b><span>橙点为太阳</span></div>
             <div class="scene-overlay sun-badge" aria-live="polite"><span class="badge-sun" aria-hidden="true"></span><strong id="sun-state">太阳在天空中</strong><small id="sun-direction">方位 0° · 高度 0°</small></div>
             <div class="scene-overlay light-readout"><span class="readout-icon" aria-hidden="true">☀</span><div><small>此刻屋内</small><strong id="lit-rooms" aria-live="polite">正在计算光照</strong><span id="lit-detail">橙色地面为阳光落点</span></div></div>
             <div class="scene-actions"><button type="button" id="view-reset" aria-label="恢复默认三维视角">重置视角</button><button type="button" id="view-top" aria-label="切换俯视视角">俯视</button></div>

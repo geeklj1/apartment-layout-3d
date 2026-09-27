@@ -69,7 +69,7 @@ function init3D() {
     controls.update();
     controls.addEventListener('change', render);
 
-    scene.add(new THREE.HemisphereLight(0xeaf4ff, 0xd0b999, 1.85));
+    scene.add(new THREE.HemisphereLight(0xeaf4ff, 0xd0b999, 1.35));
     sun = new THREE.DirectionalLight(sunColor, 4.2);
     sun.castShadow = true;
     sun.shadow.mapSize.set(innerWidth < 700 ? 1024 : 2048, innerWidth < 700 ? 1024 : 2048);
@@ -85,7 +85,7 @@ function init3D() {
       const glass = /window|door_(0|12)$/.test(data.name);
       const wall = data.name === '1-Wall';
       const material = new THREE.MeshStandardMaterial({
-        color: floor ? ({'0':0xdecab1,'7':0xe9dfd0,'3':0xf0e8dc,'4':0xdde4df,'12':0xf4e8d5,'13':0xe5e5d7}[data.name.split('-').pop()] || 0xeee8dd) : glass ? 0xa9d1cf : wall ? 0xf2ede3 : 0xc4b49c,
+        color: floor ? ({'0':0xaebbb6,'7':0xbac4bf,'3':0xc0c9c3,'4':0xb9c8c6,'12':0xbcc7c2,'13':0xb5c2bc}[data.name.split('-').pop()] || 0xbcc7c2) : glass ? 0xa9d1cf : wall ? 0xf2ede3 : 0xc4b49c,
         roughness: floor ? 0.94 : 0.75, metalness: 0, side: THREE.DoubleSide,
         transparent: glass, opacity: glass ? 0.32 : 1,
         depthWrite: !glass,
@@ -145,7 +145,7 @@ function buildSunlitFloor() {
   }
   sunTiles = new THREE.InstancedMesh(
     new THREE.BoxGeometry(tileSize * 1.015, 0.012, tileSize * 1.015),
-    new THREE.MeshBasicMaterial({ color: 0xffaa43, transparent: true, opacity: 0.82, depthWrite: false, toneMapped: false }),
+    new THREE.MeshBasicMaterial({ color: 0xff9825, transparent: true, opacity: 0.9, depthWrite: false, toneMapped: false }),
     floorSamples.length,
   );
   sunTiles.count = 0;
@@ -238,6 +238,7 @@ function update() {
   $('altitude').textContent = `${Math.max(0, position.elevation).toFixed(1)}°`;
   $('azimuth').textContent = `${position.azimuth.toFixed(0)}° ${directionName(position.azimuth)}`;
   $('sun-direction').textContent = `方位 ${position.azimuth.toFixed(0)}° · 高度 ${Math.max(0, position.elevation).toFixed(1)}°`;
+  $('compass-sun').style.transform = `translate(-50%, -50%) rotate(${position.azimuth}deg) translateY(-20px)`;
   $('sun-state').textContent = blocked ? '前方高层可能遮挡' : position.elevation <= 0 ? '太阳位于地平线' : '太阳未被高层情景遮挡';
   $('sun-state').parentElement.classList.toggle('blocked', blocked);
   if (sun) {
