@@ -1,0 +1,640 @@
+{
+  "units": "mm",
+  "notice": "尺寸来自同户型参考模型，并非目标楼层实测。外包含墙体，净尺寸与分段投影分别表达；异形空间不能用包围长宽相乘算面积。",
+  "lines": [
+    {
+      "a": [
+        -2.966,
+        -3.32
+      ],
+      "b": [
+        0.203,
+        -3.32
+      ],
+      "text": "3.17",
+      "room": "7",
+      "id": "room-0",
+      "mm": 3169,
+      "view": "master",
+      "leader": false,
+      "labelAt": [
+        -1.3815000000000002,
+        -3.32
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        -3.23,
+        -3.673
+      ],
+      "b": [
+        -3.23,
+        -0.767
+      ],
+      "text": "2.91",
+      "room": "7",
+      "id": "room-1",
+      "mm": 2906,
+      "view": "master",
+      "leader": false,
+      "labelAt": [
+        -3.23,
+        -2.22
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        -3.821,
+        2.06
+      ],
+      "b": [
+        -3.086,
+        2.06
+      ],
+      "text": "0.74",
+      "room": "3",
+      "chain": true,
+      "id": "room-2",
+      "mm": 735,
+      "view": "second",
+      "leader": false,
+      "labelAt": [
+        -3.4535,
+        2.06
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -3.086,
+        2.06
+      ],
+      "b": [
+        -0.866,
+        2.06
+      ],
+      "text": "2.22",
+      "room": "3",
+      "chain": true,
+      "id": "room-3",
+      "mm": 2220,
+      "view": "second",
+      "leader": false,
+      "labelAt": [
+        -1.976,
+        2.06
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -4.25,
+        -1.272
+      ],
+      "b": [
+        -4.25,
+        -0.647
+      ],
+      "text": "0.63",
+      "room": "3",
+      "chain": true,
+      "id": "room-4",
+      "mm": 625,
+      "view": "second",
+      "leader": false,
+      "labelAt": [
+        -4.25,
+        -0.9595
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -4.25,
+        -0.647
+      ],
+      "b": [
+        -4.25,
+        1.815
+      ],
+      "text": "2.46",
+      "room": "3",
+      "chain": true,
+      "id": "room-5",
+      "mm": 2462,
+      "view": "second",
+      "leader": false,
+      "labelAt": [
+        -4.25,
+        0.584
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -2.308,
+        4.04
+      ],
+      "b": [
+        -1.897,
+        4.04
+      ],
+      "text": "0.41",
+      "room": "4",
+      "chain": true,
+      "id": "room-6",
+      "mm": 411,
+      "view": "bath",
+      "leader": false,
+      "labelAt": [
+        -2.1025,
+        4.04
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -1.897,
+        4.04
+      ],
+      "b": [
+        0.203,
+        4.04
+      ],
+      "text": "2.10",
+      "room": "4",
+      "chain": true,
+      "id": "room-7",
+      "mm": 2100,
+      "view": "bath",
+      "leader": false,
+      "labelAt": [
+        -0.847,
+        4.04
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -2.9,
+        1.935
+      ],
+      "b": [
+        -2.9,
+        2.757
+      ],
+      "text": "0.82",
+      "room": "4",
+      "chain": true,
+      "id": "room-8",
+      "mm": 822,
+      "view": "bath",
+      "leader": false,
+      "labelAt": [
+        -2.9,
+        2.346
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -2.9,
+        2.757
+      ],
+      "b": [
+        -2.9,
+        3.509
+      ],
+      "text": "0.75",
+      "room": "4",
+      "chain": true,
+      "id": "room-9",
+      "mm": 752,
+      "view": "bath",
+      "leader": false,
+      "labelAt": [
+        -2.9,
+        3.133
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -1.075,
+        5.52
+      ],
+      "b": [
+        0.323,
+        5.52
+      ],
+      "text": "1.40",
+      "room": "13",
+      "chain": true,
+      "id": "room-10",
+      "mm": 1398,
+      "view": "kitchen",
+      "leader": false,
+      "labelAt": [
+        -0.376,
+        5.52
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        0.323,
+        5.52
+      ],
+      "b": [
+        2.44,
+        5.52
+      ],
+      "text": "2.12",
+      "room": "13",
+      "chain": true,
+      "id": "room-11",
+      "mm": 2117,
+      "view": "kitchen",
+      "leader": false,
+      "labelAt": [
+        1.3815,
+        5.52
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        -2.5,
+        3.248
+      ],
+      "b": [
+        -2.5,
+        3.629
+      ],
+      "text": "0.38",
+      "room": "13",
+      "chain": true,
+      "labelAt": [
+        -3.65,
+        3.18
+      ],
+      "id": "room-12",
+      "mm": 381,
+      "view": "kitchen",
+      "leader": true,
+      "whole": false
+    },
+    {
+      "a": [
+        -2.5,
+        3.629
+      ],
+      "b": [
+        -2.5,
+        5.187
+      ],
+      "text": "1.56",
+      "room": "13",
+      "chain": true,
+      "id": "room-13",
+      "mm": 1558,
+      "view": "kitchen",
+      "leader": false,
+      "labelAt": [
+        -2.5,
+        4.408
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        0.323,
+        -3.29
+      ],
+      "b": [
+        3.789,
+        -3.29
+      ],
+      "text": "3.47",
+      "room": "0",
+      "labelDy": 16,
+      "id": "room-14",
+      "mm": 3466,
+      "view": "balcony",
+      "leader": false,
+      "labelAt": [
+        2.056,
+        -3.29
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        0.08,
+        -3.689
+      ],
+      "b": [
+        0.08,
+        -3.053
+      ],
+      "text": "0.64",
+      "room": "0",
+      "id": "room-15",
+      "mm": 636,
+      "view": "balcony",
+      "leader": false,
+      "labelAt": [
+        0.08,
+        -3.371
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        4.4,
+        -4.786
+      ],
+      "b": [
+        4.4,
+        -3.053
+      ],
+      "text": "1.73",
+      "room": "0",
+      "id": "room-16",
+      "mm": 1733,
+      "view": "balcony",
+      "leader": false,
+      "labelAt": [
+        4.4,
+        -3.9194999999999998
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        4.4,
+        -2.933
+      ],
+      "b": [
+        4.4,
+        -0.647
+      ],
+      "text": "2.29",
+      "room": "12",
+      "chain": true,
+      "id": "room-17",
+      "mm": 2286,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        4.4,
+        -1.79
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        4.4,
+        -0.647
+      ],
+      "b": [
+        4.4,
+        1.815
+      ],
+      "text": "2.46",
+      "room": "12",
+      "chain": true,
+      "id": "room-18",
+      "mm": 2462,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        4.4,
+        0.584
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        4.4,
+        1.815
+      ],
+      "b": [
+        4.4,
+        3.128
+      ],
+      "text": "1.31",
+      "room": "12",
+      "chain": true,
+      "id": "room-19",
+      "mm": 1313,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        4.4,
+        2.4715
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        4.4,
+        3.128
+      ],
+      "b": [
+        4.4,
+        5.187
+      ],
+      "text": "2.06",
+      "room": "12",
+      "chain": true,
+      "id": "room-20",
+      "mm": 2059,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        4.4,
+        4.157500000000001
+      ],
+      "whole": false
+    },
+    {
+      "a": [
+        0.323,
+        -1.8
+      ],
+      "b": [
+        3.789,
+        -1.8
+      ],
+      "text": "3.47",
+      "room": "12",
+      "id": "room-21",
+      "mm": 3466,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        2.056,
+        -1.8
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        -0.746,
+        0.95
+      ],
+      "b": [
+        3.789,
+        0.95
+      ],
+      "text": "4.54",
+      "room": "12",
+      "id": "room-22",
+      "mm": 4535,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        1.5215,
+        0.95
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        0.323,
+        2.3
+      ],
+      "b": [
+        3.789,
+        2.3
+      ],
+      "text": "3.47",
+      "room": "12",
+      "id": "room-23",
+      "mm": 3466,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        2.056,
+        2.3
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        2.56,
+        4.35
+      ],
+      "b": [
+        3.789,
+        4.35
+      ],
+      "text": "1.23",
+      "room": "12",
+      "id": "room-24",
+      "mm": 1229,
+      "view": "living",
+      "leader": false,
+      "labelAt": [
+        3.1745,
+        4.35
+      ],
+      "whole": true
+    },
+    {
+      "a": [
+        -3.941,
+        5.98
+      ],
+      "b": [
+        3.909,
+        5.98
+      ],
+      "text": "最大外宽 7.85m",
+      "id": "overall-0",
+      "mm": 7850,
+      "view": "whole",
+      "overall": true,
+      "whole": true,
+      "title": "最大外包横宽",
+      "labelAt": [
+        -0.016000000000000014,
+        5.98
+      ]
+    },
+    {
+      "a": [
+        4.65,
+        -4.908
+      ],
+      "b": [
+        4.65,
+        5.307
+      ],
+      "text": "最大外长 10.22m",
+      "id": "overall-1",
+      "mm": 10215,
+      "view": "whole",
+      "overall": true,
+      "whole": true,
+      "title": "最大外包纵深",
+      "labelAt": [
+        4.65,
+        0.1995
+      ]
+    }
+  ],
+  "rooms": [
+    {
+      "id": "0",
+      "view": "balcony",
+      "name": "主阳台",
+      "widthMm": 3466,
+      "depthMm": 1733,
+      "note": "开口宽3466；窄端进深636，宽端1733，弧边不是矩形。"
+    },
+    {
+      "id": "3",
+      "view": "second",
+      "name": "次卧",
+      "widthMm": 2955,
+      "depthMm": 3087,
+      "note": "主体2955×2462；窗凹位735×625。不是完整矩形。"
+    },
+    {
+      "id": "4",
+      "view": "bath",
+      "name": "卫生间",
+      "widthMm": 2511,
+      "depthMm": 1574,
+      "note": "主体2100×1574；西侧凹位411×752。"
+    },
+    {
+      "id": "7",
+      "view": "master",
+      "name": "主卧",
+      "widthMm": 3169,
+      "depthMm": 2906,
+      "note": "净宽3169，净长2906；窗台构件不计入房间净长。"
+    },
+    {
+      "id": "12",
+      "view": "living",
+      "name": "客餐厅及入户",
+      "widthMm": 4535,
+      "depthMm": 8120,
+      "note": "客厅净宽3466；入户直段1229；卧室短过道1069。右侧纵向投影2286＋2462＋1313＋2059。"
+    },
+    {
+      "id": "13",
+      "view": "kitchen",
+      "name": "厨房及生活阳台",
+      "widthMm": 3515,
+      "depthMm": 1939,
+      "note": "整体边界包络3515×1939；横向投影1398＋2117，纵向381＋1558，不代表新隔墙。"
+    }
+  ]
+}
