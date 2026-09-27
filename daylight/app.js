@@ -171,7 +171,7 @@ function update() {
   $('altitude').textContent = `${Math.max(0, position.elevation).toFixed(1)}°`;
   $('azimuth').textContent = `${position.azimuth.toFixed(0)}° ${directionName(position.azimuth)}`;
   $('sun-direction').textContent = `方位 ${position.azimuth.toFixed(0)}° · 高度 ${Math.max(0, position.elevation).toFixed(1)}°`;
-  $('sun-state').textContent = blocked ? '侧方邻楼可能遮挡' : position.elevation <= 0 ? '太阳位于地平线' : '直射光进入示意';
+  $('sun-state').textContent = blocked ? '侧方邻楼可能遮挡' : position.elevation <= 0 ? '太阳位于地平线' : '太阳未被邻楼情景遮挡';
   $('sun-state').parentElement.classList.toggle('blocked', blocked);
   if (sun) {
     const vector = sunVector(position);
