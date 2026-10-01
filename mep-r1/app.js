@@ -1,6 +1,12 @@
 'use strict';
 const D=window.MEP_DATA,$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],NS='http://www.w3.org/2000/svg';
 $('.pdf-link span').textContent=D.sheets.length+'页 PDF';
+document.title='全屋水电与弱电设计 · R1.1';
+const elevationCSS=document.createElement('link');elevationCSS.rel='stylesheet';elevationCSS.href='elevations.css';document.head.append(elevationCSS);
+document.querySelector('a[download]').download='全屋水电与弱电方案设计交付册-R1.1.pdf';
+document.querySelector('footer').firstChild.textContent='未来的家 · 机电专项 R1.1 ';
+document.querySelector('.identity p').textContent='方案深化 R1.1 · 2026.10.01 · 新增垂直立面';
+const elevationTab=document.createElement('button');elevationTab.className='tab';elevationTab.dataset.tab='elevations';elevationTab.setAttribute('aria-pressed','false');elevationTab.textContent='立面与标高';document.querySelector('nav').insertBefore(elevationTab,document.querySelector('[data-tab="power"]'));
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const state={system:'power',room:'whole',query:'',status:'all',selected:'E14',labels:true,view:[0,0,900,1100],tab:'plan'};
 const toXY=p=>[(p.x+4.4)*100,(p.z+5.15)*100];
@@ -48,6 +54,11 @@ function endPointer(e){const moved=dragged;pointers.delete(e.pointerId);gesture=
 svg.addEventListener('pointerup',endPointer);svg.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);gesture=pointers.size?gstate():null;});
 svg.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY>0?1.1:.9);},{passive:false});
 function showTab(id){state.tab=id;$$('.tab').forEach(b=>{b.classList.toggle('active',b.dataset.tab===id);b.setAttribute('aria-pressed',String(b.dataset.tab===id));});$$('.tab-panel').forEach(p=>p.hidden=p.id!=='tab-'+id);if(id==='plan')view();}
+$('#elevation-select').innerHTML=D.elevations.map(e=>`<option value="${e.code}">${e.code} ${esc(e.title)}</option>`).join('');
+function renderElevation(){const e=D.elevations.find(e=>e.code===$('#elevation-select').value);$('#elevation-drawing').innerHTML=e.svg;$('#elevation-drawing svg').setAttribute('aria-label',e.title+'，垂直标高图，完成地面为零点');$('#elevation-title').textContent=e.title;$('#elevation-note').textContent=e.note;$('#elevation-pending').textContent=e.pending;$('#elevation-pdf').href='mep-design-r1.pdf#page='+e.page;$('#elevation-points').innerHTML=e.marks.flatMap(m=>m.ids).map(id=>{const p=D.points.find(p=>p.id===id);return `<button data-elevation-point="${id}"><strong>${id}</strong> ${esc(p.name)}<small>${esc(p.height)}</small></button>`;}).join('');$$('[data-elevation-point]').forEach(b=>b.onclick=()=>{const p=D.points.find(p=>p.id===b.dataset.elevationPoint);Object.assign(state,{selected:p.id,system:p.system,room:p.room,query:'',status:'all'});for(const k of ['system','room','query','status'])$('#'+k).value=state[k];showTab('plan');fit();render();select(p.id);});}
+$('#elevation-select').onchange=()=>{renderElevation();history.replaceState(null,'','#elevation='+$('#elevation-select').value);};
+$('#elevation-zoom').onclick=()=>{const on=$('#elevation-drawing').classList.toggle('enlarged');$('#elevation-zoom').setAttribute('aria-pressed',String(on));$('#elevation-zoom').textContent=on?'适应宽度':'放大图纸';};
+$('#height-rules').innerHTML=D.heightRules.map(t=>`<p>${esc(t)}</p>`).join('');renderElevation();
 $$('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
 $('#circuits').innerHTML=D.circuits.map(c=>`<tr><td><button class="circuit-link" data-circuit="${c.id}">${c.id}</button></td><td>${esc(c.name)}</td><td>${c.kw}</td><td>${esc(c.wire)}</td><td>${esc(c.amp)}</td><td>${esc(c.note)}</td></tr>`).join('');
 $$('.circuit-link').forEach(b=>b.onclick=()=>{state.system='all';state.room='whole';state.status='all';state.query=b.dataset.circuit;for(const k of ['system','room','status','query'])$('#'+k).value=state[k];showTab('plan');fit();render();});
@@ -66,4 +77,5 @@ $('#book-index').innerHTML=D.sheets.map(s=>`<tr><td>${s.code}</td><td><a href="m
 $('#sources').innerHTML=D.sources.map(([id,title,body,url])=>`<details><summary>${id} · ${esc(title)}</summary><p>${esc(body)}</p><p>${url.startsWith('http')?`<a href="${esc(url)}" target="_blank" rel="noopener">原始来源</a>`:esc(url)}</p></details>`).join('')+'<p class="warning">住建部部分原页面和凯度链接本次未成功在线读取；设备条件沿既有本地官方资料。本册没有声称完成现行标准逐条审图。</p>';
 const initialId=new URLSearchParams(location.hash.slice(1)).get('point');if(initialId){const q=D.points.find(p=>p.id===initialId);if(q){Object.assign(state,{selected:q.id,system:q.system,room:q.room});$('#system').value=q.system;$('#room').value=q.room;}}
 render();fit();loadInputs();countReview();window.addEventListener('resize',()=>{if(state.tab==='plan')renderMarkers();});
+const initialElevation=new URLSearchParams(location.hash.slice(1)).get('elevation');if(D.elevations.some(e=>e.code===initialElevation)){$('#elevation-select').value=initialElevation;renderElevation();showTab('elevations');}
 window.mepApp={state,getFiltered:filtered,selectPoint:select,showTab};
