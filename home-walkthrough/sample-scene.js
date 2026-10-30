@@ -1,7 +1,8 @@
 import * as T from 'three';
 import {GLTFLoader,Reflector} from './assets/addons.js';
+import {leafStep} from './kitchen-door.mjs?v=door-r02';
 export async function createHome(scene,renderer,onProgress){
- const gltf=await new GLTFLoader().loadAsync('./assets/home/home-baked.glb?v=full-final2',e=>onProgress?.(e.loaded,e.total));
+ const gltf=await new GLTFLoader().loadAsync('./assets/home/home-baked.glb?v=door-r02',e=>onProgress?.(e.loaded,e.total));
  const group=gltf.scene,roof=new T.Group();roof.name='sample-roof';group.add(roof);
  const ceiling=[];let triangles=0,draws=0;
  group.traverse(o=>{if(!o.isMesh)return;draws++;triangles+=(o.geometry.index?.count||o.geometry.attributes.position.count)/3;
@@ -16,6 +17,11 @@ export async function createHome(scene,renderer,onProgress){
  });
  for(const o of ceiling)roof.attach(o);
  scene.add(group);
+ const doorParts=[];group.traverse(o=>{if(o.isMesh&&/^KITCHEN_SLIDER_[012]_/.test(o.name))doorParts.push(o);});
+ const doorLeaves=[0,1,2].map(i=>{const g=new T.Group();g.name='kitchen-door-leaf-'+i;group.add(g);return g;});
+ for(const o of doorParts)doorLeaves[Number(o.name.match(/^KITCHEN_SLIDER_([012])_/)[1])].attach(o);
+ if(doorLeaves.some(g=>g.children.length<5))throw new Error('三扇厨房门模型不完整，请刷新页面');
+ function setDoorOpen(t){for(let i=0;i<3;i++)doorLeaves[i].position.z=(1-t)*i*leafStep;}
  // Only used by glass / metal; baked MeshBasicMaterial receives no new light.
  scene.add(new T.HemisphereLight('#ffffff','#c5c1b7',1));
  function mirror(w,h,x,y,z,ry,color){const o=new Reflector(new T.PlaneGeometry(w,h),{textureWidth:512,textureHeight:512,clipBias:.003,color,multisample:2});o.position.set(x,y,z);o.rotation.y=ry;group.add(o);return o;}
@@ -23,5 +29,5 @@ export async function createHome(scene,renderer,onProgress){
  const vanityMirror=mirror(.55,.65,8.475,1.345,4.11,Math.PI,0xeeeeee);
  const tvReflection=mirror(1.654,.944,7.2,1.05,4.368,0,0x151515);
  const ac=[{name:'客厅',dimensions:[1.08,.33,.249]},{name:'主卧',dimensions:[.855,.328,.219]},{name:'次卧',dimensions:[.855,.328,.219]}];
- return {group,roof,ac,triangles,draws,failedTextures:false,update(camera,bird){const {x,z}=camera.position;bathMirror.visible=!bird&&x<3.5&&z<4.5;vanityMirror.visible=!bird&&x>5.8&&z<4.25;tvReflection.visible=!bird&&x>3.1&&z>4.25;}};
+ return {group,roof,ac,triangles,draws,setDoorOpen,doorLeaves,failedTextures:false,update(camera,bird){const {x,z}=camera.position;bathMirror.visible=!bird&&x<3.5&&z<4.5;vanityMirror.visible=!bird&&x>5.8&&z<4.25;tvReflection.visible=!bird&&x>3.1&&z>4.25;}};
 }
