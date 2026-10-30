@@ -1,8 +1,8 @@
 import * as T from 'three';
 import {OrbitControls} from './assets/addons.js';
-import {createHome} from './sample-scene.js?v=door-r02';
-import {rooms,walls,outline,blocked,getHomeColliders,referenceFiles} from './home-data.mjs?v=door-r02';
-import {advanceDoor,getKitchenDoorColliders,doorSweep} from './kitchen-door.mjs?v=door-r02';
+import {createHome} from './sample-scene.js?v=layout-r03b';
+import {rooms,walls,outline,blocked,getHomeColliders,referenceFiles} from './home-data.mjs?v=layout-r03b';
+import {advanceDoor,getKitchenDoorColliders,doorSweep} from './kitchen-door.mjs?v=layout-r03b';
 const $=id=>document.getElementById(id),view=$('view'),keys=new Set(),held=new Set();
 let renderer,home,bird=false,entered=false,high=true,yaw=0,pitch=0,drag=null,joy={x:0,y:0},activeRoom='living';
 const baseBoxes=getHomeColliders().filter(b=>!b.name.startsWith('kitchen-door-')),scene=new T.Scene();scene.background=new T.Color('#efeee9');
@@ -16,10 +16,10 @@ orbit.enabled=false;camera.position.set(8.55,1.55,6.3);camera.lookAt(4.4,1.25,6.
 function setStatus(s){$('status').textContent=s;}
 function orient(){camera.rotation.set(pitch,yaw,0,'YXZ');}
 function resetInput(){keys.clear();held.clear();joy={x:0,y:0};drag=null;$('stick').style.transform='';}
-function updateReference(){const file=activeRoom==='door'?(doorTarget?'door-open':'door-closed'):referenceFiles[activeRoom];$('referenceImage').src='assets/home/'+file+'.jpg?v=door-r02';}
-function syncDoorUI(){const moving=doorOpen!==doorTarget;$('kitchenDoorToggle').textContent=doorTarget?'关闭厨房门':'收拢厨房门';$('kitchenDoorToggle').setAttribute('aria-pressed',String(doorTarget===1));$('doorHint').textContent=moving?'门扇移动中…':doorOpen?'已叠收在餐边柜侧 · 试案':'三扇玻璃已闭合 · 试案';document.body.dataset.doorOpen=String(doorOpen);document.body.dataset.doorTarget=String(doorTarget);if(activeRoom==='door')updateReference();}
+function updateReference(){const file=activeRoom==='door'?(doorTarget?'door-open':'door-closed'):referenceFiles[activeRoom];$('referenceImage').src='assets/home/'+file+'.jpg?v=layout-r03b';}
+function syncDoorUI(){const moving=doorOpen!==doorTarget;$('kitchenDoorToggle').textContent=doorTarget?'关闭厨房门':'收拢厨房门';$('kitchenDoorToggle').setAttribute('aria-pressed',String(doorTarget===1));$('doorHint').textContent=moving?'门扇移动中…':doorOpen?'已叠收在矮柜侧 · 试案':'三扇玻璃已闭合 · 试案';document.body.dataset.doorOpen=String(doorOpen);document.body.dataset.doorTarget=String(doorTarget);if(activeRoom==='door')updateReference();}
 $('kitchenDoorToggle').onclick=()=>{if(!home)return;if(!bird&&blocked(camera.position.x,camera.position.z,[doorSweep])){$('doorHint').textContent='请先离开门扇移动区域';return;}doorTarget=1-doorTarget;boxes=[...baseBoxes,...getKitchenDoorColliders(doorOpen,true)];resetInput();syncDoorUI();needsRender=true;};
-function go(name){if(!rooms[name])return;const r=rooms[name];camera.fov=name==='render'?56.4:63;camera.updateProjectionMatrix();if(blocked(...r.at,boxes))throw new Error('房间落点被阻挡: '+name);bird=false;orbit.enabled=false;document.body.classList.remove('bird');home.roof.visible=true;camera.position.set(r.at[0],name==='render'?1.55:1.6,r.at[1]);yaw=Math.atan2(-(r.target[0]-r.at[0]),-(r.target[1]-r.at[1]));pitch=name==='render'?Math.atan2(-.3,Math.hypot(4.15,.2)):-.15;orient();activeRoom=name;updateReference();$('referenceImage').alt=r.name+'同场景离线效果图';$('room').value=name;$('modeName').textContent='精细模型 · 烘焙日光';$('roomName').textContent=r.name;$('roomNote').textContent=r.note;$('overview').setAttribute('aria-pressed','false');$('overview').textContent='全屋俯瞰';resetInput();updateMarker();}
+function go(name){if(!rooms[name])return;const r=rooms[name];camera.fov=name==='render'?56.4:63;camera.updateProjectionMatrix();if(blocked(...r.at,boxes))throw new Error('房间落点被阻挡: '+name);bird=false;orbit.enabled=false;document.body.classList.remove('bird');home.roof.visible=true;camera.position.set(r.at[0],name==='render'?1.55:1.6,r.at[1]);yaw=Math.atan2(-(r.target[0]-r.at[0]),-(r.target[1]-r.at[1]));pitch=r.pitch??(name==='render'?Math.atan2(-.3,Math.hypot(4.15,.2)):-.15);orient();activeRoom=name;updateReference();$('referenceImage').alt=r.name+'同场景离线效果图';$('room').value=name;$('modeName').textContent='精细模型 · 烘焙日光';$('roomName').textContent=r.name;$('roomNote').textContent=r.note;$('overview').setAttribute('aria-pressed','false');$('overview').textContent='全屋俯瞰';resetInput();updateMarker();}
 function overview(){bird=true;orbit.enabled=true;home.roof.visible=false;document.body.classList.add('bird');camera.fov=48;camera.updateProjectionMatrix();camera.position.set(9,13,10);orbit.target.set(5,0,4.1);orbit.update();$('modeName').textContent='全屋俯瞰';$('roomName').textContent='全屋当前方案';$('roomNote').textContent='拖动旋转 · 滚轮或双指缩放';$('overview').textContent='返回行走';$('overview').setAttribute('aria-pressed','true');resetInput();}
 function enter(){entered=true;document.body.classList.add('entered');$('welcome').hidden=true;go($('room').value);view.focus();}
 $('start').onclick=enter;$('room').onchange=()=>{if(!home)return;if(!entered)enter();else go($('room').value);};

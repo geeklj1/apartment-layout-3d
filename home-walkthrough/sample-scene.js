@@ -1,8 +1,8 @@
 import * as T from 'three';
 import {GLTFLoader,Reflector} from './assets/addons.js';
-import {leafStep} from './kitchen-door.mjs?v=door-r02';
+import {leafStep} from './kitchen-door.mjs?v=layout-r03b';
 export async function createHome(scene,renderer,onProgress){
- const gltf=await new GLTFLoader().loadAsync('./assets/home/home-baked.glb?v=door-r02',e=>onProgress?.(e.loaded,e.total));
+ const gltf=await new GLTFLoader().loadAsync('./assets/home/home-baked.glb?v=layout-r03b',e=>onProgress?.(e.loaded,e.total));
  const group=gltf.scene,roof=new T.Group();roof.name='sample-roof';group.add(roof);
  const ceiling=[];let triangles=0,draws=0;
  group.traverse(o=>{if(!o.isMesh)return;draws++;triangles+=(o.geometry.index?.count||o.geometry.attributes.position.count)/3;

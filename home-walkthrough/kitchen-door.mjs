@@ -1,4 +1,4 @@
-import config from './kitchen-door-config.mjs?v=door-r02';
+import config from './kitchen-door-config.mjs?v=layout-r03b';
 export {config};
 export const leafWidth=(config.zEnd-config.zStart+2*config.overlap)/3;
 export const leafStep=leafWidth-config.overlap;
