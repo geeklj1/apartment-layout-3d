@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#eeede8">
+  <meta name="description" content="按2026年11月1日复尺方案制作的Blender全屋3D。支持手机旋转、缩放、房间视角与模型下载。方案研究，非施工图。">
+  <meta name="robots" content="noindex,nofollow">
+  <title>未来的家 · 复尺版3D</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css?v=20261101a">
+  <link rel="preload" as="image" href="assets/overview.webp">
+  <script type="importmap">{"imports":{"three":"./assets/three.module.js"}}</script>
+</head>
+<body>
+  <a class="skip" href="#details">跳到方案说明</a>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="未来的家，返回全屋">未来的家<span>空间模型</span></a>
+    <p>2026.11.01 复尺版</p>
+    <a class="file-link" href="assets/home.blend" download>Blender 源文件<span> .blend</span></a>
+  </header>
+  <main>
+    <section class="workspace" aria-label="交互式全屋模型">
+      <div class="viewer-column">
+        <div class="view-heading">
+          <div><h1 id="view-title">把平面，放进空间。</h1><p id="view-subtitle">厨房、玄关与全屋家具，在同一比例里查看。</p></div>
+          <label class="view-select">查看空间<select id="view"><option value="overview">全屋轴测</option><option value="top">全屋俯视</option><option value="kitchen">厨房</option><option value="entry">玄关鞋柜</option><option value="living">客餐厅</option><option value="master">主卧</option><option value="second">次卧试排</option><option value="bath">卫生间</option><option value="balcony">阳台试排</option></select></label>
+        </div>
+        <div id="stage" tabindex="0" aria-label="3D模型，方向键旋转，加减键缩放，按0恢复当前视角">
+          <img id="poster" src="assets/overview.webp" alt="Blender渲染的全屋轴测，厨房与玄关背靠背，客厅及两个卧室按复尺方案排列" width="1600" height="1200">
+          <div id="loading" role="status"><span id="load-text">正在载入 Blender 模型</span><progress id="progress" max="100" aria-label="模型加载进度"></progress></div>
+          <div id="failure" hidden role="alert"><strong>3D 暂时没有载入</strong><p id="failure-text">仍可查看下方渲染图，或重新尝试。</p><button id="retry">重新载入</button></div>
+          <div class="stage-meta"><span id="mode-label">轴测剖开</span><span>方案研究 · 非施工图</span></div>
+          <div class="camera-controls" aria-label="视角控制">
+            <button id="rotate-left" aria-label="向左旋转模型">↶</button><button id="rotate-right" aria-label="向右旋转模型">↷</button>
+            <button id="zoom-in" aria-label="放大模型">＋</button><button id="zoom-out" aria-label="缩小模型">−</button><button id="reset">复位</button>
+          </div>
+        </div>
+        <div class="viewer-toolbar">
+          <div class="toggles"><button id="walls" aria-pressed="false">显示完整墙体</button><button id="door" aria-pressed="false">关闭厨房门</button></div>
+          <p id="gesture-help">单指旋转 · 双指缩放、平移</p>
+        </div>
+        <p class="model-note" id="model-note">局部尺寸按复尺建模；房间连接与层高仍为示意。</p>
+      </div>
+      <aside id="details">
+        <div class="aside-title"><span>当前空间</span><h2 id="room-name">全屋关系</h2></div>
+        <p class="description" id="room-description">保留厨房与鞋柜背靠背、餐边与电视柜同墙、床侧贴飘窗的最新关系。不放餐桌、餐椅和茶几。</p>
+        <dl id="dimensions"></dl>
+        <div class="note-box"><h3>建模边界</h3><p id="room-limit">房间之间的错位、墙厚和门间连接尚未实测闭合。3D用于看比例与布局，不用于生产下料。</p></div>
+        <details class="materials"><summary>定版材料</summary><div class="material-list">
+          <div><img src="assets/wood.webp" alt="南非柚木官方电子板样" width="52" height="52"><p>南非柚木<span>10034Y06 · 木纹柜体</span></p></div>
+          <div><img src="assets/cream.webp" alt="奶油白官方电子板样" width="52" height="52"><p>奶油白 EBH<span>10447EBH · 柜门抽面</span></p></div>
+          <div><img src="assets/floor.webp" alt="蜜杏木纹砖官方电子图" width="52" height="52"><p>蜜杏木纹砖<span>600 × 1200 · 公共区与两卧</span></p></div>
+          <div><img src="assets/wet.webp" alt="奶芙米瓷砖官方电子图" width="52" height="52"><p>奶芙米<span>750 × 1500 · 厨墙与卫浴墙地</span></p></div>
+          <p class="fine">墙顶：立邦菱花白 OW025-4。卧室门：美心1112月光石。电子板样与渲染不等于实体色准。</p>
+        </div></details>
+        <div class="downloads"><a href="assets/home.glb" download>下载轻量 3D 模型 <span>GLB</span></a><a href="assets/plan.png" target="_blank" rel="noopener">打开复尺平面图 <span>PNG</span></a></div>
+      </aside>
+    </section>
+    <section class="renders" aria-labelledby="renders-title">
+      <div class="section-heading"><h2 id="renders-title">同一模型的 Blender 渲染</h2><p>点开看大图；下列画面与交互模型来自同一份几何。</p></div>
+      <div class="render-grid">
+        <a href="assets/kitchen.webp" target="_blank" rel="noopener"><img src="assets/kitchen.webp" alt="厨房L形台面、净烟机、电器高柜与冰箱的Blender渲染" loading="lazy" width="1600" height="1200"><span>厨房 <small>连续台面与独立电器塔</small></span></a>
+        <a href="assets/living.webp" target="_blank" rel="noopener"><img src="assets/living.webp" alt="客厅沙发与4300毫米餐边展示电视组合柜" loading="lazy" width="1600" height="1200"><span>客餐厅 <small>2000＋300＋2000</small></span></a>
+        <a href="assets/master.webp" target="_blank" rel="noopener"><img src="assets/master.webp" alt="主卧1550乘2220床与1760衣柜，床侧贴飘窗" loading="lazy" width="1600" height="1200"><span>主卧 <small>床侧贴飘窗，保留原窗台</small></span></a>
+        <a href="assets/entry.webp" target="_blank" rel="noopener"><img src="assets/entry.webp" alt="玄关通高洞洞板、换鞋座与鞋柜" loading="lazy" width="1600" height="1200"><span>玄关 <small>含墙1800，柜顶2500</small></span></a>
+      </div>
+    </section>
+    <footer><p>Blender 参数化模型 / 手机与电脑浏览器可用</p><p>次卧家具、阳台深度、柜体内部、门轨与设备安装仍需深化核验。此版不代表现场施工或安装批准。</p></footer>
+  </main>
+  <script type="module" src="app.js?v=20261101a"></script>
+</body>
+</html>
