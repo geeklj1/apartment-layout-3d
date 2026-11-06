@@ -6,10 +6,19 @@ export function viewer(canvas){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputEncoding=T.sRGBEncoding;
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(34,1,1,60000),controls=new T.OrbitControls(camera,canvas);
   controls.enablePan=false;controls.minPolarAngle=.06;controls.maxPolarAngle=Math.PI-.10;
-  scene.add(new T.HemisphereLight(0xfff5e7,0xb6bdc8,1.0));const lamp=new T.DirectionalLight(0xffefde,.75);lamp.position.set(-4,8,6);scene.add(lamp);
-  const shades={wood:0xac8762,cream:0xe9e3ce,stone:0xdfd9ce,glass:0xafc9d0,metal:0xa9abad,dark:0x464845,black:0x282a29,white:0xf1ede5,fabric:0xc6b9a3,mirror:0xb9cbcb,wall:0xe8e6d9,tile:0xd7d0bd,floor:0xb49978,light:0xf7d499};
+  scene.add(new T.HemisphereLight(0xffffff,0xcacbc9,.70));
+  for(const [x,y,z,hue,power] of [[-4,5,6,0xfffcf7,.45],[4,3,2,0xf5f7fa,.16]]){
+    const lamp=new T.DirectionalLight(hue,power);lamp.position.set(x,y,z);scene.add(lamp)
+  }
+  const shades={wood:0xb69477,cream:0xece8dc,stone:0xdfd9ce,glass:0xafc9d0,metal:0xa9abad,dark:0x464845,black:0x282a29,white:0xf1ede5,fabric:0xc6b9a3,mirror:0xb9cbcb,wall:0xf3f0ea,tile:0xd7d0bd,floor:0xb49978,light:0xf7d499};
   let g=null,data=null,initial=new T.Vector3(),target=new T.Vector3();
+  let grain=null;
   const paint=()=>renderer.render(scene,camera);
+  new T.TextureLoader().load('assets/teak-10034y06.webp',tex=>{
+    tex.encoding=T.sRGBEncoding;tex.wrapS=tex.wrapT=T.MirroredRepeatWrapping;
+    tex.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());tex.needsUpdate=true;grain=tex;
+    g?.traverse(o=>{if(o.material?.name==='wood'){o.material.map=grain;o.material.color.setHex(0xffffff);o.material.needsUpdate=true}});paint()
+  });
   function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();paint()}
   new ResizeObserver(resize).observe(canvas);controls.addEventListener('change',paint);
   function state(open){
@@ -34,8 +43,20 @@ export function viewer(canvas){
     }
     for(const [mat,pos] of Object.entries(batches)){
       const geom=new T.BufferGeometry();geom.setAttribute('position',new T.Float32BufferAttribute(pos,3));geom.computeVertexNormals();
+      if(mat==='wood'){
+        const uv=[],n=geom.getAttribute('normal').array;
+        for(let i=0;i<pos.length;i+=3){
+          const [a,b,c]=[Math.abs(n[i]),Math.abs(n[i+1]),Math.abs(n[i+2])];
+          // World-space projection: grain runs vertically on doors, along
+          // cabinet width on shelves, and down the depth of side panels.
+          const x=pos[i],y=pos[i+1],z=pos[i+2];
+          uv.push((b>.65?-z:a>c?-z:x)/1200,(b>.65?x:y)/1200);
+        }
+        geom.setAttribute('uv',new T.Float32BufferAttribute(uv,2))
+      }
       const glass=mat==='glass',color=new T.Color(shades[mat]??0xb3afa5).convertSRGBToLinear();
       const material=new T.MeshLambertMaterial({color,side:T.DoubleSide,transparent:glass,opacity:glass?.26:1,depthWrite:!glass});
+      material.name=mat;if(mat==='wood'&&grain){material.map=grain;material.color.setHex(0xffffff)}
       const obj=new T.Mesh(geom,material);if(glass)obj.renderOrder=1;g.add(obj);
     }
     scene.add(g);paint();
