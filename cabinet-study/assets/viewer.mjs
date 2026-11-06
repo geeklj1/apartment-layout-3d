@@ -1,10 +1,11 @@
 // Geometry is the cabinet renderer's mesh, expressed as (width, depth, height).
 // Convert to right-handed Three.js coordinates with height vertical; use explicit
 // two-sided faces for imported meshes of mixed winding.
+import {materialStage} from './material-stage.mjs';
 export function viewer(canvas){
   const T=window.THREE,renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power'});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));renderer.outputEncoding=T.sRGBEncoding;
-  const scene=new T.Scene(),camera=new T.PerspectiveCamera(34,1,1,60000),controls=new T.OrbitControls(camera,canvas);
+  const scene=new T.Scene(),camera=new T.PerspectiveCamera(34,1,1,60000),parallel=new T.OrthographicCamera(),controls=new T.OrbitControls(camera,canvas);
   controls.enablePan=false;controls.minPolarAngle=.06;controls.maxPolarAngle=Math.PI-.10;
   scene.add(new T.HemisphereLight(0xffffff,0xcacbc9,.70));
   for(const [x,y,z,hue,power] of [[-4,5,6,0xfffcf7,.45],[4,3,2,0xf5f7fa,.16]]){
@@ -13,7 +14,14 @@ export function viewer(canvas){
   const shades={wood:0xb69477,cream:0xece8dc,stone:0xdfd9ce,glass:0xafc9d0,metal:0xa9abad,dark:0x464845,black:0x282a29,white:0xf1ede5,fabric:0xc6b9a3,mirror:0xb9cbcb,wall:0xf3f0ea,tile:0xd7d0bd,floor:0xb49978,light:0xf7d499};
   let g=null,data=null,initial=new T.Vector3(),target=new T.Vector3();
   let grain=null;
-  const paint=()=>renderer.render(scene,camera);
+  let orthographic=false;
+  const paint=()=>{
+    if(!orthographic){renderer.render(scene,camera);return}
+    const half=camera.position.distanceTo(controls.target)*Math.tan(T.MathUtils.degToRad(camera.fov/2));
+    parallel.top=half;parallel.bottom=-half;parallel.left=-half*camera.aspect;parallel.right=half*camera.aspect;
+    parallel.near=camera.near;parallel.far=camera.far;parallel.position.copy(camera.position);parallel.quaternion.copy(camera.quaternion);parallel.updateProjectionMatrix();renderer.render(scene,parallel);
+  };
+  const room=materialStage(T,scene,renderer,paint);let showStage=true;
   new T.TextureLoader().load('assets/teak-10034y06.webp',tex=>{
     tex.encoding=T.sRGBEncoding;tex.wrapS=tex.wrapT=T.MirroredRepeatWrapping;
     tex.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());tex.needsUpdate=true;grain=tex;
@@ -57,23 +65,29 @@ export function viewer(canvas){
       const glass=mat==='glass',color=new T.Color(shades[mat]??0xb3afa5).convertSRGBToLinear();
       const material=new T.MeshLambertMaterial({color,side:T.DoubleSide,transparent:glass,opacity:glass?.26:1,depthWrite:!glass});
       material.name=mat;if(mat==='wood'&&grain){material.map=grain;material.color.setHex(0xffffff)}
-      const obj=new T.Mesh(geom,material);if(glass)obj.renderOrder=1;g.add(obj);
+      const obj=new T.Mesh(geom,material);if(glass)obj.renderOrder=1;
+      obj.userData.oldFloorMarker=mat==='floor';if(obj.userData.oldFloorMarker)obj.visible=!showStage;g.add(obj);
     }
     scene.add(g);paint();
   }
-  function reset(){camera.position.copy(initial);controls.target.copy(target);camera.lookAt(target);controls.update();paint()}
-  function show(src,open){data=src;resize();state(open);
+  function reset(){orthographic=false;camera.position.copy(initial);controls.target.copy(target);camera.lookAt(target);controls.update();paint()}
+  function front(){if(!data)return;orthographic=true;const [w,d,h]=data.size;
+    controls.target.set(w/2,h/2,d/2);const half=Math.max(h/2,w/(2*camera.aspect))*1.1;
+    camera.position.copy(controls.target).add(new T.Vector3(0,0,half/Math.tan(T.MathUtils.degToRad(camera.fov/2))));camera.lookAt(controls.target);controls.update();paint();
+  }
+  function background(on){showStage=on;room.set(on);g?.children.forEach(o=>{if(o.userData.oldFloorMarker)o.visible=!on});paint()}
+  function show(src,open,id,withRoom=true){data=src;resize();room.build(id,src.size);showStage=withRoom;state(open);background(withRoom);
     // Frame the union of both actual positions. For hinged doors and tilted
     // cabinets the nominal size alone would crop the open render.
     const bounds=new T.Box3();for(const [,v] of src.p){for(let i=0;i<v.length;i+=3)bounds.expandByPoint(new T.Vector3(v[i],v[i+2],v[i+1]))}
     bounds.getCenter(target);
-    const forward=new T.Vector3(.46,.22,1).normalize(),right=new T.Vector3().crossVectors(camera.up,forward).normalize(),up=new T.Vector3().crossVectors(forward,right);
+    const forward=(id==='kitchen'?new T.Vector3(-.34,.49,1):new T.Vector3(.46,.29,1)).normalize(),right=new T.Vector3().crossVectors(camera.up,forward).normalize(),up=new T.Vector3().crossVectors(forward,right);
     const tan=Math.tan(T.MathUtils.degToRad(camera.fov)/2),p=new T.Vector3();let range=0;
     for(const [,v] of src.p)for(let i=0;i<v.length;i+=3){
       p.set(v[i],v[i+2],v[i+1]).sub(target);
       range=Math.max(range,p.dot(forward)+Math.max(Math.abs(p.dot(right))/(tan*camera.aspect),Math.abs(p.dot(up))/tan));
     }
-    range*=1.17;camera.near=range*.035;camera.far=range*8;camera.updateProjectionMatrix();
+    range*=1.32;camera.near=range*.028;camera.far=range*8;camera.updateProjectionMatrix();
     initial.copy(target).addScaledVector(forward,range);
     controls.minDistance=range*.30;controls.maxDistance=range*3;reset();
   }
@@ -81,5 +95,5 @@ export function viewer(canvas){
     s.theta+=yaw;s.phi=Math.min(controls.maxPolarAngle,Math.max(controls.minPolarAngle,s.phi+pitch));
     camera.position.copy(controls.target).add(new T.Vector3().setFromSpherical(s));controls.update();paint()}
   canvas.addEventListener('keydown',e=>{const a={ArrowLeft:[-.18,0],ArrowRight:[.18,0],ArrowUp:[0,-.14],ArrowDown:[0,.14]}[e.key];if(a){e.preventDefault();rotate(...a)}});
-  return {show,state,reset,rotate};
+  return {show,state,reset,front,rotate,background};
 }

@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark"><meta name="description" content="九组定制柜的效果图、开柜细节与可旋转三维模型。">
+<meta name="color-scheme" content="light dark"><meta name="description" content="九组定制柜与墙地材质的日间、夜间效果，开柜细节与可旋转模型。">
 <title>全屋柜体图册</title>
-<link rel="stylesheet" href="assets/gallery.css"><link rel="preload" as="image" href="assets/media-hero.webp">
+<link rel="stylesheet" href="assets/gallery.css?v=4"><link rel="preload" as="image" href="assets/media-hero.webp?v=4">
 </head>
 <body>
 <a class="skip" href="#display">跳到当前柜体</a>
@@ -17,24 +17,32 @@
 <article id="display" tabindex="-1">
  <div class="head"><div><p class="location" id="zone">客餐厅</p><h2 id="title">电视与餐边组合柜</h2></div><span id="counter" aria-hidden="true">02 / 09</span></div>
  <div class="modes" aria-label="选择查看方式">
-  <button type="button" data-mode="hero" aria-pressed="true">效果图</button><button type="button" data-mode="axo" aria-pressed="false">轴测图</button><button type="button" data-mode="open" aria-pressed="false">开柜图</button><button type="button" data-mode="model" aria-pressed="false">旋转模型</button>
+  <button type="button" data-mode="hero" aria-pressed="true">空间日景</button><button type="button" data-mode="night" aria-pressed="false">空间夜景</button><button type="button" data-mode="axo" aria-pressed="false">轴测图</button><button type="button" data-mode="open" aria-pressed="false">开柜图</button><button type="button" data-mode="model" aria-pressed="false">旋转模型</button>
  </div>
  <figure>
   <div class="stage">
-   <img id="photo" width="1300" height="920" fetchpriority="high" src="assets/media-hero.webp" alt="电视与餐边组合柜的外观效果">
+   <img id="photo" width="1300" height="920" fetchpriority="high" src="assets/media-hero.webp?v=4" alt="电视与餐边组合柜、菱花白墙与蜜杏地砖的日间效果">
    <div id="model" hidden><canvas tabindex="0" aria-label="柜体三维模型，按左右方向键旋转，上下方向键改变俯仰"></canvas></div>
    <p id="status" hidden role="status"></p>
   </div>
   <div id="tools" hidden aria-label="模型操作"><div class="model-buttons">
-    <button type="button" id="toggle" aria-pressed="false">打开柜门</button><button type="button" id="left">左转</button><button type="button" id="right">右转</button><button type="button" id="reset">复位</button>
+    <button type="button" id="toggle" aria-pressed="false">打开柜门</button><button type="button" id="room" aria-pressed="true">隐藏墙地</button><button type="button" id="front">正视</button><button type="button" id="left">左转</button><button type="button" id="right">右转</button><button type="button" id="reset">复位</button>
   </div><span>拖动旋转，双指或滚轮缩放；材质为电子近似</span></div>
-  <figcaption><span id="caption">外观效果</span><a id="original" href="assets/media-hero.webp" target="_blank" rel="noopener">查看大图 ↗</a></figcaption>
+  <figcaption><span id="caption">空间日景</span><a id="original" href="assets/media-hero.webp?v=4" target="_blank" rel="noopener">查看大图 ↗</a></figcaption>
  </figure>
+ <section id="mediaWidths" class="widths" aria-label="组合柜正视宽度比例">
+  <div class="width-head"><h3>正视宽度比例</h3><span>总宽 4300 mm</span></div>
+  <div class="width-total"><span>左 · 电视区 <b>2350</b></span><span>右 · 展示与餐边 <b>1950</b></span></div>
+  <div class="width-band" role="img" aria-label="同尺三段，自左至右为电视区2350、展示列300、餐边柜1650毫米"><i></i><i></i><i></i></div>
+  <p>右侧 1950 内暂按 <strong>展示列 300 ＋ 餐边柜 1650</strong> 试分，三段同尺。</p>
+  <details id="roundDetail"><summary>查看右端三层圆角详图</summary><p>下柜深 400、主吊柜深 350、中层上翻深 300 mm。右端三层都做圆角：下层沿原图 R50，上、中层先按 R50 试排。</p><a href="assets/media-right.webp?v=4" target="_blank" rel="noopener"><img id="roundPhoto" loading="lazy" alt="餐边柜右端三层收圆详图；点击查看大图"></a></details>
+ </section>
  <div class="details"><section><h3>设计要点</h3><p id="detail"></p></section><section><h3 id="dimlabel">模型外包 · 毫米</h3><p id="dim"></p></section></div>
+ <section class="finishes"><h3>本组材质</h3><dl><div><dt>墙面</dt><dd id="wallFinish"></dd></div><div><dt>地面</dt><dd id="floorFinish"></dd></div><div><dt>门抽与柜体</dt><dd id="boardFinish"></dd></div></dl></section>
 </article>
 </main>
-<footer><p><strong>饰面分配</strong>　华富立 10447EBH 奶油白为主要门抽饰面，10034Y06 南非柚木用于柜内与层板。电视矮柜可见面、餐边两扇上翻门、灶下三门及拱形柜双抽用南非柚木；盆柜双抽面沿已选效果试用同款。厨房上柜外露封板用奶油白。</p><p>实际颜色以同工艺板样为准。效果与三维模型用于查看方案，不作为生产下料尺寸。</p></footer>
+<footer><p><strong>选材</strong>　华富立 10447EBH 奶油白、10034Y06 南非柚木；萨米特蜜杏 SF-WI1U1260805X、奶芙米 SF-V157509-0822X；立邦菱花白 OW025-4。</p><p>墙地仅为局部搭配示意，不代表整屋布局、排砖或下料图。色彩和纹理由电子样展示，以同工艺实样为准。</p></footer>
 <noscript>启用 JavaScript 以切换柜体和视角。</noscript>
-<script src="assets/gallery.js" defer></script>
+<script src="assets/gallery.js?v=4" defer></script>
 </body>
 </html>
